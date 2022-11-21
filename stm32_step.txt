@@ -53,7 +53,10 @@ stm32_guetting-start + stm32_programs STM32L476RG FLASH: 1024KB  RAM:96KB  RAM2:
 	*************************************************
 	* 	3- Le Bootloader du stm32 		*
 	*************************************************
-
+stm32_guetting-start/1-Bootloader_jump
+1-Echec sur le bootloader avec atollic.
+2-Nous passons sur CubeMX et CubeIDE.
+3-Création du bootloader jump vers une application.
 
 
 

@@ -1,0 +1,15 @@
+*****************************************************************************************************************************
+******************************Mise en place de la structure******************************************************************
+*****************************************************************************************************************************
+Microcontrôleur Nucleo-L476RG.(Flash:1024KB  RAM:96KB  RAM2:32KB)
+Microcontrôleur Nucleo-L073RZ.(Flash:192KB  RAM:20KB)
+Microcontrôleur L476ZG
+--------------------------------------------------------------------------------------------
+29/08/2022 Nous n'avons pas fait de bootloader avec atollic
+           Nous continuons avec CubeMX pour la config et CubeIDE sur le développement
+           pour pouvoir revenir sur atollic et créer le bootloader
+           Peut être que nous allon utiliser le stm32L476RG à terme au lieu de stm32L073RZ 
+	   car c'est celui qu'on travaille au lieu de prendre le tuto.
+---------------------------------------------------------------------------------------------
+
+
