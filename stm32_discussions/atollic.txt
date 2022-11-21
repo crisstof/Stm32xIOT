@@ -1,0 +1,32 @@
+*************************************************************************
+*		DISCUSSIONS GENERALES					*
+*************************************************************************
+
+ATOLLIC TRUESTUDIO
+------------------
+pour avoir dans debug l'application.elf et application.binary!
+project>properties C/C++ Build-> Builder type: Internal builder
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

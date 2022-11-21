@@ -1,0 +1,19 @@
+# Lines starting with  are comments.
+# Ignore files called 'file.ext'
+
+#Enlever les fichiers word
+#pour garder que les pdf
+#/stm32_Initiation/stm32_Initiation_Programs.docx
+#/stm32_practices/stm32_UART.docx
+#/stm32_practices/stm32_SPI.docx
+#/stm32_practices/stm32_I2C.docx
+#/stm32_practices/stm32_CAN.docx
+#/stm32_practices/stm32_GPIO.docx
+#/guetting_Started/essentials/library/HAL/atollic_architecture.docx
+
+#stm32_introduction_guetting_Started.docx
+
+# Ignoring directories
+#Enlever tout un répertoire trop volumineux
+#/guetting_Started/applications/keil/UART_IRQ_NVIC/USART_RX_TX_IRQ/
+#/guetting_Started/applications/CubeMX/UART_IRQ_NVIC/

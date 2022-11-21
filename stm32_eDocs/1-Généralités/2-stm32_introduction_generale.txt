@@ -1,0 +1,824 @@
+*************************************************************************************************************************
+*   				 DEVELOPPEMENTS AUTOUR DE MICROCONTROLEUR						*
+*		     				STM32									*
+*															*
+*************************************************************************************************************************
+
+La carte NUCLEO est un moyen économique et flexible pour
+construire des prototypes sur la base de microcontrôleur STM32.
+Le support comporte La connectivité Arduino et un débogueur/
+programmeur ST-LINK/V2.
+
+Choix: 	ARM-476RG 
+       	Processeur ARM@32bits Cortex@-M4
+       	Fréquence CPU maximale de 80MHZ
+	1Mo Flash (1Mbyte)
+	128Ko de SRAM
+	VDD de 1.71V à 3,6V
+
+Clock Sources:
+	4 à 48 MHz oscillateur
+	32 KHZ oscillateur pour RTC
+
+
+
+
+Comments développer sur le stm32 ?
+---------------------------------
+
+  - CubeMX    STM32CubeL4
+    C'est l'environnement recommandé par stm32, plutôt interface
+    graphique et programmation avec les fonctions dédiés, c'est
+    la plus simple et la plus utilisée, avec des librairies à jour.
+    https://www.st.com/en/development-tools/stm32cubemx.html#tools-software
+
+  - En langage C et des accès aux registres.
+    Bien sûr il faut connaître les registres et le fonctionnement, c'est
+    la façon la plus hard du développement.
+
+  - En langage C./C++ mais à l'aide des librairies HAL et ..., c'est une
+    un moyen de développer de façon intermédiaire, qui offre une possibilité
+    de reconfiguration à la carte des e/s sans charger de nouveau le programme.
+     
+
+  -Et bien d'autres solutions ./docs/ide
+                              avec un exemple sur led, uart, dma.
+
+Les pilotes de périphériques sont fréquemment mis à jour par les fournisseurs de silicium. Maintenir le la prise en 
+charge cible de milliers de microcontrôleurs serait un énorme tâche chronophage. Nous recommandons donc à tous les 
+développeurs STM32 d'utiliser le Générateur de code STM32CubeMX pour générer les dernières versions des pilotes, 
+des piles et middleware pour votre projet.
+
+
+Architecture Logiciel du microcontrôleur :
+-----------------------------------------
+
+ALU (unité arithmétique et logique) 
+c’est la partie opérative du système la seule capable de faire des calculs et 
+communique avec la mémoire via des registres.
+L’ALU pour gagner en rapidité et efficacité, elle est connectée à des registres dont l’accès peut se faire 
+en un seul cycle d’horloge, ces registres sont :
+	- soit à usage général (stocks des informations alimentant les calculs).
+	- soit spécifiques, dédiés à une tâche très précise.
+
+L'Architecture ARM de type RISC repose sur 17 REGISTRES :
+Les registres permettent de dialoguer avec le microcontrôleur dans le programme:
+  .Registres généraux : R0 à R12.
+  .Registre SP (pointeur de pile) R13. C’est la PILE SYSTEME, elle contient l’adresse accessible en mémoire vive 
+            pour stocker des informations temporaires mais vitales pour le bon déroulement de l’ensemble.
+  .Registre LR (de lien) R14.
+  .Registre PC (pointeur de programme) R15. Contient l’@ courante du programme en cours et progresse dans l’exécution 
+            du programme.
+  .Registre xPSR (status) se décline (APSR, EPSR,IPSR). 
+     Et se complète avec 4 registres spéciaux
+     PRIM, FAULTMASK, BASEPRI (gestion d’exception), CONTROL (gère le niveau de privilège)
+
+
+La zone mémoire RAM (sans mémoire après une coupure d’alimentation) est prédéfinie au départ par le programme. 
+Cette zone est pointée par le registre SP et évolue au gré des écritures/lectures dans une structure LIFO (pile d’assiette).
+
+L’architecture ARM de type Harvard sépare physiquement les accès à mémoire code (stockage du programme) des accès à 
+la mémoire données (variables programme, accessible en lecture/écriture)
+
+Basé sur un jeu d’instruction RISC (Reduced Instruction Set Computer)
+L’ALU peut mettre à jour les flag (nombre de 5) dans xPSR .
+Indicateur C (Carry) retenue lors de calcul débordement de la représentation non signée lors de l’instruction précédente 
+             donc le calcul est partiellement faux (C=1) comme 8 bits la somme 200+60 dépasse le max 255.
+Indicateur Z (Zero) = 1 si le résultat de l’instruction donne zéro.
+Indicateur N (Négative) contient le bit de poids fort celui qui contient la plus grande valeur comme celui de gauche 
+             pour une écriture de gauche à droite. Pour les valeurs signé N=1 donc valeur négative.
+Indicateur V(Overflow) =1 s’il y a un débordement de la représentation signée et dons le résultat signé est faux 
+            (8bits : 140+40 en signé on peut juste entre -128 et 127)
+Indicateur Q (saturation flag) pour USAT et SSAT =1 si ces instructions sont saturé le registre traité.
+
+Le microcontrôleur à la capacité de n’activer qu’en fonction des besoins certaines parties du microcontrôleur 
+ou d’endormir le circuit complètement s’il n’est pas utilisé.
+
+
+Périphériques :
+--------------
+Pour dialoguer avec l’extérieur nous avons des E/S GPIO (General Purpose Input/Output)
+
+Le timer pour compter/décompter les changements d’état (front montant/descendant) d’un signal binaire, on parle de counter (compteur).
+Le système voit une horloge synchrone dont la fréquence est fixe et connue. 
+Il peut être overflow ou underflow car le registre a une capacité finie comme un registre de 16 bits on compte 0xFFF et un front 
+il bascule à 0 et les informations accumulées sont perdues, mais un tel évènement est détectable car l’unité émet une requête 
+d’interruption pour que le programme puisse réagir en conséquence.
+Sinon plutôt que repartir à zéro on peut repartir d’une valeur prédéfinie dans le registre ad-hoc (reload). 
+Le temps entre 2 débordements est alors modifié. 
+Comme la base de temps est ajustable (diviseur de fréquence) et le nombre de front est programmable, on peut intervenir entre 
+2 requêtes d’interruptions successives (reload), il est possible de mettre en place des évènements logiciels synchrones de façon 
+précise à l‘aide de ces timers. 
+On trouve le watchdog qui s’assure que le système ne reste pas bloqué dans le traitement qu’il exécute (boucle infinie), 
+c’est un sablier qu’il faut venir retourner avant qu’il ne soit vide. Sinon une alerte interruption est levée.
+
+Les Capture permet de mesurer le temps qu’un bouton poussoir a été appuyé. 
+L’unité capture est associé à un signal de type binaire sur une broche, à un timer qui mesure le temps qui passe et à un registre 
+pour stocker la valeur capturée du timer lorsque l’évènement apparait.
+
+Les Compare (symétrique) toujours un signal binaire mais le timer est remplacé par un compteur qui compte les évènement (les fronts)
+sur une broche. Lorsque le compteur égale la valeur il déclenche une interruption. 
+
+L’ADC (convertisseur analogique-numérique concerne les capteurs de température, pression, distance, accélération …) 
+L’électronicien équipe le process d’un capteur qui transforme cette grandeur en volt de type analogique compatible avec notre microcontrôleur [0-5V].
+Brancher sur un multiplexeur et que logiciellement on sélectionne la voies. 
+L’ADC a une résolution, la quantité de valeurs entières que peut prendre l’ADC après conversion.
+
+PWM la symétrique d’un ADC est un DAC (digital-analog converter: convertisseur numérique-analogique ) permet de transformer une valeur 
+numérique en analogique, mais peu courante car cela consomme beaucoup est peut être remplacé par un PWM.
+
+
+Les bus pour envoyer des données sur un simple fil avec des 0 et 1.
+Le protocole le plus simple est la liaison asynchrone (Universal Asynchronous Receiver Transmitter). 
+Un fil pour émettre et un pour recevoir et une masse commune. Les données transitent octet par octet à une vitesse fixée à l’avance.
+Il est complexifié avec une horloge commune qui permet de synchroniser les données, on obtient une
+Universal Synchronous/Asynchronous Receiver Transmitter (USART) comme rs232, mais insuffisant il faut augmenter le débit, 
+sécuriser les données pour s’assurer que ce qui est envoyé est correctement reçu. 
+Et il faut aussi plus de 2 systèmes ensemble comme un réseau.
+
+Pour répondre aux besoins de communication, nous avons les protocoles industriels bus industriel ou terrain : I2C, SPI CAN Modbus …
+On peut aussi prendre un microcontrôleur simple et ajouter le périphérique manquant à travers un bus industriel si ce protocole 
+équipe le circuit, comme un DAC absent, mais on peut ajouter une extension électronique et le piloter avec une interface 
+I2C ou SPI pour avoir accès à cette conversion numérique analogique.
+
+
+
+
+
+sites:
+------
+https://www.st.com/content/st_com/en.html
+
+*************************************************************************************************************************
+*   				 DEVELOPPEMENTS AUTOUR DE MICROCONTROLEUR						*
+*		     				STM32 COMPREHENSION							*
+*															*
+*************************************************************************************************************************
+Le stm32 est sur la base ARM qui utilise la convention little endian donc du poids faible en premier vers le poids fort.
+C’est-à-dire que pour une variable locale de 4 octets et une variable Carac de 3 octets.
+Nous avons pour ranger la mémoire : une valeur de 32 bits, occupe 4 adresse consécutives : 
+    				          1111 1111 . 1111 1111 . 1111 1111 . 1111 1111   (4 octets = 8bits => 4*8=32)
+2e3=8 + 2e2=4 + 2e1=2 + 2e0=1 = 0XFF    0X    FF          FF          FF          FF                                          
+La première stock le poids faible, la seconde le poids suivant ainsi de suite ...
+Mais dans char Carac[3] = {10, '3', 'A'} est la valeur dans la table ascci en hexa { 10:0X0A  '3':0X33  'A'=0x41 }
+Chaque case du tableau correspond à un seul octet et donc l'inversion de poids faible et fort n'est pas nécessaire,
+dans un tableau mais pour int locale=0X1A2B3C4D c'est bien little endian.
+Pour les int valeurs codées sur 16bits (short int) effectivement ici on accentue le avec short puisque en embarqué
+nous voulons réduire au maximum la taille de mémoire. Mai revenons le short int (16bits) où l'adresse la plus
+basse (8 bits de poids faible) doit être paire (termine par un bit à 0) donc 32bits.
+Comme locale l'adresse la plus basse doit être doublement paire (2 dernier bits sont à 0)
+Mais pour les 64bits le problème ne se propage pas puisqu'il lit par 2 la lecture successives de 32 bits.
+mem:
+0X20000000: 4D  3C  2B  1A     int locale=0X1A2B3C4D
+0X20000004: 0A  33  41  00     char Carac[3] = { 10:0X0A  '3':0X33  'A'=0x41 }
+
+
+ Ce qui nous amène au type de variable:
+ _______________________________________________________________________________
+|Type			| mem (Bits)    |  valeur 				|
+|================================================================================
+|bit			| 1	    	|  0   to  1				|	
+|--------------------------------------------------------------------------------
+|signed char		| 8 		| -128 to 127				|
+|--------------------------------------------------------------------------------
+|unsigned char		| 8 		| 0    to 255				|
+|--------------------------------------------------------------------------------
+|int			| 16 		| -32768 to 32767			|	
+|--------------------------------------------------------------------------------
+|unsigned int		| 16		| 0    to 63535      			|
+|--------------------------------------------------------------------------------
+|short	int		| 16 		| -32768  to 32767   			|
+|--------------------------------------------------------------------------------
+|long int		| 32		| -2.147.483.648 to  2.147.483.647 	|	
+|--------------------------------------------------------------------------------
+|unsigned long	int	| 32 		| 0  to  4.294.967.295			|		
+|--------------------------------------------------------------------------------
+|float			| 32		| -1.175e-38 to 3.402e38		|	
+|--------------------------------------------------------------------------------
+|double			| 32		| -1.175e-38 to 3.402e38		|			
+|---------------------------------------------------------------------------------------------------------
+|boolean(true/false)	| 1 octet c'est la valeur minimale à stocker 00000001bits (le reste sont remplis)|		
+|---------------------------------------------------------------------------------------------------------
+
+
+Actions sur les registres comment ? :    opération (<< >>  & |) (décalage, ET, OU)
+------------------------------------
+init   		 b7   b6  b5  b4  b3  b2  b1  b0
+       		 0    0   0   0   0   0   0   0
+1<<4   		 0    0   0   1   0   0   0   0
+1<<0		 0    0   0   0   0   0   0   1
+Masque(ou)---------------------------------------         
+(1<<0) | (1<<4)  0    0   0   1   0   0   0   1
+Masque inverse-----------------------------------
+NOT ou ~
+(1<<0) | (1<<4)  1    1   1   0   1   1   1   0
+Masque &-----------------------------------------
+		 0    0   0   0   0   0   0   0
+& ~(0xFF) =      0    0   0   0   0   0   0   0   
+
+Si nous souhaitons manipuler le registre GPIOx_IDR il faut chercher l’adresse de base du périphérique, 
+puis décaler cette adresse de la valeur d’offset propre au registre (très fastidieux mais c'est comme ça)
+Mais c'est pourquoi ST-MicroElectronics fournie des fichiers de configuration comme le fichier STM32f10x.h 
+qui contient l’ensemble de définitions pour nous aider.
+Typedef  struct{
+   __IO uint32_t  CRL;          #define PERIPH_BASE ((uint32_t)0X40000000)
+   __IO uint32_t  CRH;          #define APB2PERIPH_BASE (PERIPH_BASE + 0X10000)
+   __IO uint32_t  IDR;          #define GPIOB_BASE  (APB2PERIPHçBASE + 0X0C00)
+   __IO uint32_t  ODR;
+   __IO uint32_t  BSRR;         #define GPIOB  ((GPIO_TypeDef *) GPIOB_BASE)
+   __IO uint32_t  BRR;
+   __IO uint32_t  LCKR;         #En remontant la chaine: 0x40000000+0x10000+0x0C00 soit 0x4001 0C00
+} GPIO_TypeDef;                 #  Qui est bien l’adresse de base du GPIOB fournie par la documentation
+
+Pour l'accès au registre il suffit de lire le registre IDR du port B à écrire value=GPIOB->IDR;
+ 								value prend la l'adresse 0x40010C00
+Vous savez comment trouver et manipuler l’adresse d’un registre pour le STM32!!
+
+Mais qu'est ce qu'il y a comme registre dans un microcontrôleur ?
+----------------------------------------------------------------
+L'Architecture ARM de type RISC repose sur 17 REGISTRES :
+   [
+     R0 à R12    (Registres généraux) 
+     R13 le registre SP (pointeur de pile) PILE SYSTEME, elle contient l’adresse accessible en mémoire vive 
+                                                         pour stocker des informations temporaires  
+                                                         pour le bon déroulement de l’ensemble.
+     R14 le registre LR (de lien) 
+     R15 le registre PC (pointeur de programme) il contient l’@ courante du programme en cours et progresse 
+						dans l’exécution du programme.
+     R16 le registre xPSR (status) se décline (APSR, EPSR,IPSR). 
+                        Et se complète avec 4 registres spéciaux
+                        PRIM, FAULTMASK, BASEPRI (gestion d’exception), CONTROL (gère le niveau de privilège)
+   ]
+
+
+*************************************************************************************************************************
+*     			GPIO (general purpose input/output) et oui une pin peut être une entrée ou une sortie		*
+*************************************************************************************************************************
+Ce sont des ports disponibles sur la carte Nucleo.
+Ce sont des ports génériques et doivent être configurés.
+8 configurations possibles pour une pin: 
+input  Analog		  :entrée permettant une acquisition directe de la tension(état binaire pas connue sur le registre)
+input  Floating           :mode de base pour une entrée, aucune tension appliquée la valeur n'est pas connue.
+input  Pull-up/pull-down  :entrée où il est possible de fixer la valeur par défaut à 0(pulldown) 1(pullup)
+input  Analog             :Non utiilisé
+
+Output Push-pull	  :mode de sortie dans lequel la tension appliquée à la broche est toujours forcée à 0 ou 1.
+Output Open-drain         :mode de sortie dans lequel le niveau de tension haut est fixé par le circuit connecté à la broche
+Ouput  Alternat push-pull :mode de sortie identique au mode push-pull, mais l’état de la broche est contrôlé par un 
+                           autre périphérique que le port
+Output Alternat open-drain:mode de sortie identique au mode open-drain, mais l’état de la broche est contrôlé par un 
+                           autre périphérique que le port
+
+Comprendre la différence entre le Push-Pull et Open-Drain :
+Si vous choisissez un drain ouvert, la broche de sortie peut être LOW (Gnd) ou flottant tandis
+si vous choisissez Push Pull, la broche de sortie peut être HAUT ou BAS.
+
+
+Il y a 16 broches sur un port, il faut 4 bits par broche pour configurer e/s. (16*4=64 bits)
+Soit 64 bits pour configurer l’ensemble des broches d’un port. 
+Or un registre fait 32 bits; il faut donc 2 registres pour configurer l’ensemble des broches du même port d’où 
+l’existence de 2 registres : CRL et CRH.
+CRL (L pour low) permet de configurer les broches de 0 à 7.
+CRH (H pour high) de 8 à 15.
+
+Si on veut une sortie Output push-pull, il faudrra fixer 0b0001 aux bits b11 b10 b9 b8 dans le CRH.
+il faudra regarder la documentation pour savoir l'initialisation de début du registre CRH.
+GPIOA->CRH = GPIOA->CRH & ~(0xF << 8); // Mise à 0 des bits    	 b11 b10 b9 b8   
+GPIOA->CRH = GPIOA->CRH | (0x01 << 8); // Mise à 1 du bit b8   	 0   1   0  0 
+           						       & 0   0   0  0
+           						       = 0   0   0  0
+           						       | 0   0   0  1                                         
+           						       = 0   0   0  1
+Ecrire sur un port:
+le registre ODR dont les 16 premiers bits fixent l’état de chaque broche en sortie d’une port.
+Pour mettre à 1 la broche 8 du port B nous fixons à 1 le bit 8 de ODR
+GPIOB->ODR = GPIOB->ODR | (1 << 8);
+
+Remarque:
+On remarquera qu’étant donné que le STM32 n’a pas de mémoire « bit accessible » l’affectation d’un bit nécessite 
+la lecture d’un registre, le masquage adéquat de la valeur ainsi lue et enfin l’affectation du résultat sur le registre.
+Soit au moins 3 opérations.
+Il existe cependant dans l’architecture du Cortex une alternative qui permet d’éviter cela (le « bit-banding »). 
+L'idée est de mettre en correspondance un bit avec un mot. 
+STMicro a utilisé ce principe pour créer des registres de SET et de RESET des GPIO.  
+Ce sont les registres BRR (Bit Reset Register) et BSRR (Bit Set and Reset Register). 
+Chaque bit de ces registres correspond à un bit des GPIO et seul le niveau logique 1 a un effet. 
+Le programmeur peut donc directement affecter le valeur 1 en mettant à 1 le bit correspondant du registre BSRR (action SET)
+et affecter le valeur 0 en mettant 1 le bit correspondant du registre BRR (action RESET : on agit en mettant 1 pour forcer 
+la mise à 0, ce qui peut être déroutant en première lecture).
+
+Alors Comment fait-on pour allumer une led avec les registres ?
+--------------------------------------------------------------
+ -----------------------------------------------------------------------
+| Pour faire fonctionner un GPIO il faut : 				|
+|         activer l’horloge + activer GPIOA + activer le port PA5 (0|1) |
+ -----------------------------------------------------------------------
+#include "stm32l4xx.h"
+//clignote la led sur le port PA5 une led de test sur la nucleo
+int main(void)
+{
+   volatile unsigned int i =0;
+   RCC -> AHB2ENR|= 1<<0;                              //Activer la bonne horloge
+   GPIOA->MODER &= 0xFFFFF7FF;//GPIOA->MODER &= 0<<11  //Activer le port GPIOA output mode5[01]
+   while(1)
+   {for (i= 0; i < 50000; i++)
+	GPIOA -> ODR= (1<<5); //on affecte 1 au bit du rang 5
+                              //GPIOA -> BSRR= (1<<5);
+    for (i = 0; i < 50000; i++)
+	GPIOA -> ODR= (0<<5); //PA5 à 0  ////GPIOA -> BSRR= (1<<21);}
+   }
+}
+
+*************************************************************************************************************************
+*     			LES TIMERS ou Compteur électronique								*
+*************************************************************************************************************************
+Un timer est un compteur électronique, bon rien d'extraordinaire jusqu'ici.
+Il a une résolution qui dépend de son architecture et contraint l’amplitude des valeurs sur lesquelles il peut compter.
+Un timer avec une résolution de 8 bits pourra compter entre 0 à 255. 
+Un timer de  8 bits entre 0 à 255     [Sa résolution est de 8bits et l'amplitude est de 0 à 255 top]
+	    16 bits entre 0 à 65 535 
+	    32 bits entre 0 à 4 294 967 295.
+Dans des architectures on peut mettre en série 2 times du processeur ainsi avec 2 times 16 bits en sérialisant,
+nous pouvons fabriquer un timer de 32 bits.
+
+Qu'est ce qu'on peut compter ?
+----------------------------
+L’incrémentation d’un timer se fait sur des évènements et sont générés par une horloge avec une fréquence fixée. 
+	  _   _	  _									(Et oui le timer compte le temps)
+Horloge _| |_| |_| |_  ----> Timer
+
+Il peut aussi compter des évènements non périodiques comme un signal venant d’une broche représentant
+des fronts montants et descendants on parle plutôt de compteur.
+          _      ____
+Broche___| |____|    |_  ----> Timer
+
+Conception du Timer:     -----------------------TIMER-----------------------------------
+			|	      _      _						|
+	  _   _	  _   	|	  ___| |____| |__					|					
+Horloge _| |_| |_| |_ --|--->Prescaler  -----------------> Compteur------------------	|
+			|       				|    		    |	|
+			|					|    		    |   |
+			|					-----<--Autoreload<--	|
+			|							|-------|----> débordement	
+			 ---------------------------------------------------------------
+
+
+L’entrée d’horloge d’un timer est souvent précédée d’un diviseur (prescaler). 
+	. Son rôle est d’opérer une première division de la fréquence de l’horloge pour ralentir 
+	  la fréquence de comptage du timer (son intérêt dans la pratique).
+
+L’utilisation classique d’un timer va consister à réagir au débordement (overflow) de son compteur.
+En effet la résolution du timer étant bornée, son incrémentation va inévitablement conduire à un débordement, 
+c’est-à-dire que l’incrément suivant dépasse la capacité du compteur. 
+S’il survient, le compteur est remis à zéro et un évènement interne est généré pour signaler cette rupture 
+dans la séquence de comptage.
+
+Afin de mieux contrôler le débordement, le compteur est associé à un registre dit autoreload. 
+	. Celui-ci contient la valeur à laquelle le compteur va déborder, même s’il n’a pas atteint sa capacité maximale. 
+	
+
+Le timer est incrémenté à chaque impulsion de l’horloge et lorsque son compteur atteint la valeur de l’autoreload, il déborde.
+
+Calculer les paramètres d’un timer:
+----------------------------------
+En connaissant la fréquence de l’horloge entrante du timer et en réglant le prescaler et l’autoreload,
+il est possible de régler finement la fréquence à laquelle le timer déborde ou pour un signal pwm.
+
+Attention dans le cas du stm32
+****************************** 
+le prescaler vaut 1 si le registre de configuration PSC à est à 0 côté informatique.
+                  2 s’il est à 1
+	          3 s’il est à 2
+                  4 s’il est à 3
+Autoreload(ARR) la valeur entre 0 et ARR (la valeur dépend de la résolution du pwm)
+Prescaler(PSC) divise la fréquence d'entrée de l'horloge sur un stm32 le PSC vaut PSC+1. 
+			  !!!!!(Ne pas oublier que le compteur commence à 0 d'où le +1 dans les expressions)!!!
+
+
+						CONFIGURER UN TIMER
+Paramètre et calcul d'un timer:
+------------------------------
+                  T_timer        
+   T_horloge =-------------------   ==>Période à laquelle le timer déborde: T_timer = T_horloge * PSC * (ARR+1)
+               ((PSC+1)*(ARR+1))   
+
+Comment régler le prescaler et l'autoreload pour un débordement du timer toutes les secondes ?
+  On dit le prescaler à 1.
+       T_timer                    1
+ ARR = ---------------  -1  = ------------ -1 = 72 000 000 -1
+       T_horloge*PSC              1
+                              ------------
+                              72 000 000
+
+C'est possible pour un timer sur 32bits(4 294 967 295) mais pas un 16bits.
+Pour configurer il faut connaitre sa résolution et faire attention à son amplitude des valeurs disponibles.
+Pour trouver une configuration faisable, il faut aussi utiliser le prescaler.
+Si on fixe le prescaler à 7200 nous avons un résultat acceptable pour un 16bits. (0-65535)
+
+           1
+ ARR = ------------ -1 = 10 000 - 1
+           7200
+       ------------
+        72 000 000
+-------------------------------------------------------------------------------------------------------------------
+Notre cas c'est une horloge de 80Mhz, pour régler le ARR et PSC pour un déborduement du timer toutes les secondes.
+
+Pou un timer 8bits avec horloge 1khz laquelle permet d’obtenir un timer avec une période de 1Hz :
+Prescaler :4 et autoreload 249
+Ftimer= fhorloge / (prescaler*(autoreload+1))
+Il doit prendre en considération la résolution du timer (taille du compteur)
+Autoreload à 499 pas de sens car le compteur s’incrémente que jusqu à 255 (8bit) !!!  on, reste à 249.
+
+                     F_horloge             10000
+  FoutPWM=F_timer =-------------------=----------------- = 1HZ (registre de configuration pour un PSC prescaler à 4)
+                    (PSC * (ARR+1))    (4 * (249+1))    
+
+
+
+-------------------------------------------------------------------------------------------------------------------
+
+
+                                CONFIGURER UN PWM
+
+faire clignoter une LED sur le port CH1 de TIM3 en pwm en fréquence 20khz ?
+--------------------------------------------------------------------------
+PSC est à 0 donc le PRESCALER est à 1.
+Fréquence horologe du stm32 = 72MHZ = 72 000 000HZ
+
+Formule_1: avec le psc en registre de configuration à 0
+
+               TIM(x)CLCK         72 000 000
+   FoutPWM =-------------------=----------------- = 20 0000 = 20KHZ
+            ((PSC+1)*(ARR+1))   ((0+1)*(3599+1))                      
+
+Formule_2: le véritable PSC (prescaler)
+
+                  Fhorloge       72 000 000
+  FoutPWM =-------------------=----------------- = 20KHZ
+           (PSC * (ARR+1))    (1 * (3599+1)=                         
+
+Pour nous, nous avons le stm32 avec:
+CoreMark 80MHz
+Clock source
+4 oscillateur quartz 48Mhz
+32Khz crystal oscillateur pour RTC
+Nous voulons régler l'autoreload (ARR)
+         Fhorloge               80Mhz
+ARR = ----------------- - 1 = --------------= 3599
+      (FoutPWM * PSC)           (20 000 *1
+
+
+Nous allons régler le Duty-Cycle: La durée de l’impulsion.
+Cela se fait en fixant une valeur dans le registre CCR1 du timer
+Pour commencer fixons à 20% cette durée soit (20% de la résolution du pwm) soir une valeur de 719.
+       CCR                         DC
+DC = (-----) * 100   <=>     CCR=(-----) * ARR      (DC un pourcentage et CCR le registre où l'on rentre le rapport cyclique)
+       ARR                         100
+
+de 0 à ARR donc 3999 donc 20% de 3999=719
+
+
+
+Calcul la période et le rapport cyclique de l'impulsion du PWM ?
+---------------------------------------------------------------
+5ms=>0.005sec
+2KHZ=>2000HZ
+La fréquence du compteur est de 10KHZ divisée par 5, soit 2KHZ
+La période du PWM est égale à:
+                  1                    1
+   TPWM =-------------------=-------------- =
+           fclock * (ARR+1)    200 * (0+1)                      
+-------------------------------------------------------------------------------------------------------------------
+Faire clignoter une led avec un Timer TIM2.
+int main(void){
+  RCC -> AHB2ENR |= 1<<0; //activer l'horloge gpioa
+  GPIOA->MODER &= 0xFFFFF7FF; //activer la direction en OUTPUT
+  //Activer le bus TIM2 sur APB1 (RCC_APB1ENR1) [bit0 TIM2 à 1 / TIM2 clock enabled]
+  RCC -> APB1ENR1 |= 1<<0; //mise à 1 du bit0 du registre APB1
+ //configurer le timer 2
+  TIM2->ARR = 999; //autoreload
+  TIM2->OSC = 8000; //prescaler
+ //démarrer  le timer ou lancement du timer
+ TIM2->CR1 = TIM2->CR1 | (1<<0);
+ //On peut utiliser les définitions dans la bibliothèque stm32l476xx.h avec l'équivalence de:
+ //TIM2->CR1 = TIM2->CR1 | TIM_CR1_CEN;
+ while(1) {
+     /**code pour scruter l'état du timer**/
+     /**le masque TIM_SR_UIF vaut 0x1
+     
+     if(TIM2->SR & TIM_SR_UIF)
+     {  //remise à 0 sinon il reste dans l'état indiquant
+        //un débordement et la prochaine boucle 
+        //il sera considéré débordé
+        TIM2->SR= TIM2->SR & ~TIM_SR_UIF;
+        GPIOA->ODR = GPIOA->ODR ^ (1<<5);
+     }
+ }
+}
+//Toutes les secondes, mais en test c’est pas du tout ça, il faut surement régler la quartz horloge de la nucleo
+-------------------------------------------------------------------------------------------------------------------
+*************************************************************************************************************************
+*     			EXCEPTIONS ET INTTERRUPTIONS 									*
+*************************************************************************************************************************
+Le déroulement séquentiel d’un programme peut être perturbé pour trois raisons essentielles :
+  1.Il se passe un événement matériel grave qui l’empêche de continuer. 
+    Typiquement un boitier mémoire ne répond pas (ou plus).  [EXCEPTIONS]
+  2.On demande au processeur de faire quelque chose qu’il ne parvient pas à faire comme aller lire un mot de 32 bits 
+    à une adresse impaire. [EXCEPTIONS]
+  3.Une unité périphérique a besoin de la CPU pour effectuer une tâche essentielle. 
+    Par exemple la liaison série (USART) vient de recevoir un caractère et il serait opportun de le stocker en mémoire 
+    avant qu’une autre donnée n’arrive et ne l’écrase. [INTTERRUPTIONS]
+
+Mais ce sont des demandes similaires qui viennet de périphériques (timer, ADC, USART, ...)
+Le principe de fonctionnement repose sur la table des Vecteurs d’interruptions (TVI) placé aux adresses 
+les plus basses de la mémoire 0X00000000.
+Les données stockées en position 0 et 1 de cette table sont des valeurs obligatoires 
+comme initialiser le pointeur SP et en 04 le pointeur de PC. 
+Cette tables est initialisé par défaut dans le fichier startup_stm32..md.s 
+comme le traitement d’une erreur de bus BusFault. 
+On pourra redéfinir les fonctions d’interruption pour un traitement moins définitif.
+
+Traitement
+	•terminer l’instruction en cours,
+	•sauvegarder sur la pile et dans cet ordre R0,R1,R2,R3, R12, l’@ de retour, xPSR et LR,
+	•mettre dans le registre LR un code spécifique (0xFFFFFFFx),
+	•récupérer le n° de la demande d’interruption et lire l’entrée correspondante dans la TVI,
+	•affecter PC avec l’@ trouvée dans la table au n° correspondant.
+Mais en C le compilateur est au courant et prévoira les sauvegardes nécessaires.
+
+
+
+*************************************************************************************************************************
+*     			INTTERRUPTIONS ET LE NVIC  (Nested Vectored Interrupt Controller)				*
+*************************************************************************************************************************
+Le processeur dispose d’un gestionnaire d’interruption (NVIC) dont le rôle est d’associer à chaque interruption sa 
+fonction de traitement.
+Pour Utiliser une interruption avec les périphériques:
+ .Le cas classique une interruption est provoquée par une source extérieur au processeur comme un périphérique. 
+ .Le processeur doit gérer grâce au gestionnaire d’interruption (NVIC), dont le rôle est d’associer à chaque
+  interruption sa fonction de traitement.
+
+Pour utiliser le mécanisme d’interruption en provenance d’un périphérique il va falloir :
+ - autoriser le périphérique à lancer une interruption. [A]
+ - configurer le processeur pour gérer l’interruption.  [B]
+ - écrire le code associé à l’interruption.             [C]
+
+Dans le cahier des charges du Cortex-M3, il existe jusque 240 vecteurs d’interruption dont la priorité peut varier 
+de 0 à 255 sachant que plus le niveau est faible plus priorité est grande. 
+Les 3 premières entrées de la table (Reset, NMI et Hard_Fault) possède un niveau figé (respectivement en -3,-2 et -1) 
+les autres peuvent être programmées (le niveau -3 du Reset est donc le plus élevé).
+Si l’on considère les choix fait par STMicro pour ses STM32, il n’y a au plus (au maximum) 67 vecteurs d’interruption 
+reconfigurables sur 16 niveaux de priorité (de 0 à 15) plus 6 vecteurs d’exception.
+La redéfinition des niveaux de priorité des exceptions (Bus_Fault,Usage_Fault,…) se fait à travers deux registres spécifiques.
+
+Comme nous n’aurons a priori pas à nous préoccuper de ces exceptions, concentrons-nous sur les vecteurs liés aux périphériques. 
+Leur niveau de priorité se fixe en affectant le contenu des registres IPx (x allant de 0 à 17) du NVIC. 
+Ces registres sont organisés comme suit :
+
+IPR17 IP[reserved]  IP[67]  IP[66]  IP[65]
+IPRm  IP[4m+3]  IP[2=4m+2]  IP[4m+1]  IP[4m+0] 
+IPR1  IP[7]  IP[6]  IP[5]  IP[4]
+IPR0  IP[3]  IP[2]  IP[1]  IP[0]
+STMicro pour ces STM32 ne définit le niveau de priorité que sur 4 bits soit donc une valeur entre 0 et 15. 
+Ces 4 bits correspondent aux 4 bits de poids forts des différent octets (notés IP[k]) de ces 21 registres.
+-------------------------------------------------------------------------------------------------------------------------------
+Comment affecter la priorité 11 au timer 2 ?
+Connaitre le numéro de l’interruption lié au périphérique (timer 2) dans la table des vecteurs d’interruption.
+Reference manual p204 table 63 il s’agit du numéro 28. 
+La priorité se règle en fixant le bit de 4 à 7 du registre 32 bits IPR[7].
+Pour faire cette affectation le fichier core_cm2.h définit la structure logicielle du NVIC suivante :
+Les pseudo registres de 8 bits sont définis dans cette structure inutile d’aller calculer 
+le registre IPR la programmation des différents niveaux est simple :
+NVIC->IP[28] = 11<<4
+11 est la priorité à imposer et le décalage de 4 bits est fait pour déposer cette valeur dans 
+les 4 bits de poids fort de l’octet IP.
+
+[A]- autoriser le périphérique à lancer une interruption.
+il faut autoriser à transmettre l’interruption à la CPU pour chaque vecteurs d’interruptions, 
+il existe 5 bits qui gère les autorisation et l’état courant des interruptions. 
+5 bits répartis dans 5 familles de registre sur le modèle suivant :
+-----------------------------------------------------------------------------------------------------
+	set enable	clear enable	set pending	clear pending	active bit (read only)
+0-31	ISER[0]		ICER[0]		ISPR[0]		ICPR[0]		IABR[0]
+
+32-63	ISER[1]		ICER[1]		ISPR[1]		ICPR[1]		IABR[1]
+
+34-67	ISER[2]		ICER[2]		ISPR[2]		ICPR[2]		IABR[2]
+-----------------------------------------------------------------------------------------------------
+
+Dans ce tableau la première colonne fait correspondre chaque numéro d’interruption avec un des 32 bits du registre concerné.
+Les registres IABR[x] contiennent l’état actif de chaque interruption. 
+Si elle a été détectée et servie le bit correspondant passe à un.  
+Ces registres ne sont accessibles qu’en lecture puisque qu’il est mis à 1, suite à la mise en place d’un détournement.
+Les 4 autres registres fonctionnent par paire SET/RESET. 
+C’est une technique classique qui permet d’éviter certaines erreurs d’écriture. 
+Pour activer la fonction, il faut mettre à 1 le bit SET mais sa mise à 0 ne le désactive pas. 
+Pour désactiver il faut imposer un reset et donc mettre à 1 le bit de RESET.
+La paire ISER[x]/ICER[x] permet ainsi de gérer l’autorisation de déclenchement de l’interruption concernée.
+La prise en compte d’une interruption est vue ici du côté du gestionnaire NVIC. 
+Il faut savoir qu’au niveau du périphérique il y a également des bits qui valident en local la remontée de 
+l’interruption vers le NVIC. C’est donc en quelque sorte un circuit avec deux interrupteurs en série.
+La paire ISPR[x]/ICPR[x] gère quant à elle la mise en attente. 
+En effet quand une interruption intervient et qu’elle n’est pas prioritaire elle est mise dans cet état dit d’attente 
+afin d’être servie au moment où le niveau de priorité courant le permet. 
+Jouer sur l’état de mise en attente à travers ISPR est un moyen logiciel pour déclencher une interruption. 
+Cela peut être utile dans la phase de test des procédures de traitement par exemple.
+La mise enplace de l'interruption du timer 2. Pour l'autorisé, il faut affecter le bit 28 du registre ISER|0] comme:
+  NVIC->ISER[0] = NVIC->ISER[0] | (0x01 <<28);
+On peut utiliser les mask prédéfinis dans le fichier stm32f10x.h
+  NVIC->ISER[0] = NVIC->ISER[0] | NVIC_ISER_SETENA_28;
+Soit en se rappelant que ce sont les registres de SET/RESET, donc le zéro n'a pas d'effet.
+Par conséquent une affectation directe du masque est dans ce cas possible faisant économiser l'opération de OU logique:
+  NVIC->ISER[0] = NVIC_ISER_SETENA_28;
+
+--------------------------------------------------------------------------------------------------------------------------------------
+Maintenant que nous savons autoriser le déclenchement d'une interruption en programmant le NVIC, reste à déterminer 
+la technique qui permette de « remplir » la table des vecteurs d’interruption avec l’adresse de nos propres routines.
+Tout d’abord oublions que cela puisse se faire dynamiquement, c’est à dire que le programme vienne lui-même réécrire 
+(dans une phase d’initialisation ou pour faire évoluer dynamiquement le contexte de l’application) dans cette table. 
+C’est de prime abord impossible puisque par défaut la table est en mémoire 0x0000000 c’est-à-dire en mémoire morte 
+non accessible en écriture. 
+Cela reste cependant techniquement possible : il faut alors déplacer la table et reconfigurer le Cortex pour lui indiquer 
+le nouvel emplacement. Nous ne développerons pas ce point ici.
+
+[B] - configurer le processeur pour gérer l’interruption. 
+
+[C] - écrire le code associé à l’interruption.             
+
+ECRITURE D'UN HANDLER
+---------------------
+Il faut donc que la table soit construite par le duo compilateur/linker afin d’être ensuite chargée en même temps que
+ le chargement de l’application
+Comme nous l’avons déjà indiqué, la table est créée par défaut avec des procédures « puits » de type boucle infinie. 
+Pour les interruptions liées aux périphériques, il s’agit même que d’une seule procédure appelée Default_Handler. 
+Cette procédure par défaut est ensuite renommée avec les noms qui seront ensuite utilisés pour fabriquer la table de 
+vecteurs d’interruption, ce qui donne (en version raccourcie) :
+Default_Handler PROC
+	EXPORT WWDG_IRQHandler	    [WEAK]
+	EXPORT PVD_IRQHandler	    [WEAK]
+	EXPORT TAMPER_IRQHandler    [WEAK]
+	...
+	EXPORT TIM2_IRQHandler	    [WEAK]
+	...
+	EXPORT USBWakeUp_IRQHandler [WEAK]
+	
+WWDG_IRQHandler
+PVD_IRQHandler
+....
+TIM2_IRQHandler
+....
+Tous ces nouveaux noms recopient la valeur associée au symbole Default_Handler. 
+Cela signifie qu’au départ toutes les entrées de la table d’interruption seront affectées avec la même valeur,
+ à savoir l’adresse de cette routine par défaut.
+Il faut remarquer que la redéfinition du nom est faite avec l’option [WEAK], c’est-à-dire faible. 
+Cela rend possible ce qui est communément appelé en informatique une surcharge.
+Si quelque part dans votre projet vous déclarez une nouvelle procédure dont le nom est un des noms prédéfinis
+ pour cette table, le linker va prendre l’adresse de votre procédure pour remplacer l’ancienne. 
+Le doublon de définition de procédure qui normalement devrait mener à une erreur du linker, est ici accepté 
+par le simple fait qu’une des définitions a été déclarée comme faible.
+
+
+Concrètement pour vous, cela signifie qu’il vous faut connaitre le nom générique de la routine (handler) de traitement 
+d’interruption qui va être déclenchée par l’usage d’un périphérique.  
+En utilisant le même nom vous pouvez écrire la routine de traitement qui fera le travail à faire lors de la survenue de l’interruption.
+Illustrons cela toujours avec le timer n°2. 
+On suppose que ce timer a été correctement configuré pour lever une interruption toutes les secondes et que le NVIC a été programmé 
+pour autoriser la prise en compte.
+Pour que la variable globale MaSeconde s’incrémente à chaque interruption, il suffit d’écrire en langage C :
+void TIM2_IRQHandler(void)
+{
+    MaSeconde  =  MaSeconde  +1;
+}
+
+!!!!! Il est impossible passer des arguments (en entrée ou en sortie) dans une procédure d’interruption ; 
+elles seront donc obligatoirement de type void Fonc(void). En effet par essence, ces fonctions ne sont pas appelées par une autre 
+procédure qui pourrait lui donner ses arguments d’appel. 
+L’emploi de variables globales est une solution pour partager des ressources entre les routines d’interruption et le reste de l’application.
+
+On peut maintenant
+	•Expliquer le cheminement d'une exécution lors d'une interruption,
+	•Identifier les éléments nécessaires à la configuration d'une interruption et à son traitement.
+
+*************************************************************************************************************************
+*     			EXEMPLE INTTERRUPTION ET  NVIC									*
+*************************************************************************************************************************
+On utilise la LED pour réaliser l’interruption comme le code suivant lequel le timer 2 est configuré pour déborder 
+toutes les secondes et la broche 5 du port A est configurée en sortie pour contrôler la LED USER.
+ - autoriser le périphérique à lancer une interruption. [A]
+ - configurer le processeur pour gérer l’interruption.  [B]
+ - écrire le code associé à l’interruption.             [C]
+Exemple factice mais pas pour notre nucleo.
+#include "stm32f10x.h
+
+int main(void){
+  //configurer la broce en sortie
+  RCC -> APB2ENR |= RCC_APB2ENR_IOPAEN; 
+  GPIOA->CRL &= ~(0xF << 4*5);
+  GPIOA->CRL |= ~(0x1 << 4*5);
+  //configurer le timer
+  RCC -> APB1ENR1 |= RCC_APB1ENR_TIM2EN;
+  TIM2->ARR = 9999;
+  TIM2->PSC = 7199;
+  [A] ...
+  TIM2->DIER = TIM2->DIER | (1<<0); 
+  TIM2->CR1 |= TIM1_CR1_CEN;
+  ...[A]
+   [B] ...
+  NVIC->ISER[0] |= NVIC_ISER_SETENA_28; 
+  NVIC->IP[28] |= (7<<4);
+  ...[B]
+  //lancement du timer
+  TIM2->CR1 |= TIM_CR1_CEN;
+  while(1) {
+
+
+  }
+}
+
+void TIM2_IRQHandler(void){
+   TIM2->SR &= ~TIM_SR_UIF;
+   GPIOA->ODR = GPIOA->ODR ^(1<<5);
+}
+
+[A] Autorisez l’interruption sur un périphérique
+Le débordement d’un timer peut être la source d’une interruption.
+(doc p.409) nous indique que le bit 0, noté UIE, du registre DIER, permet de contrôler le lancement de l’interruption 
+d’un timer il faut le passer à 1. On ajoute la ligne avant de lancer le timer [A]
+Equivalent aussi à TIM2->DIER |= TIM_DIER_UIE;
+
+[B] configurer le processeur pour gérer l’interruption
+        Configurez l’interruption dans le cœur
+
+Chaque source est identifiée par un numéro, nécessaire pour configurer la gestion des interruptions au niveau du processeur.
+Le tableau p.197 à 199 indique pour chaque périphérique le numéro de l’interruption associé.
+L’interruption du timer 2 est ainsi identifié par le numéro 28.
+Les informations de configuration des interruptions au niveau du cœur ne sont pas disponibles dans le document TM0008 
+mais dans Programming manuel (PM0056) qui décrit les informations liées au Cortex M3.
+chapitre Nested vectored interrupt controller (NVIC informations de configuration des interruptions) p.118. 
+Il comprend un ensemble de registre au même titre que ceux des périphériques pour seul différence qu’ils appartiennent au cœur.
+
+La déclaration des emplacements mémoires de ces registres est spécifiée dans le fichier core_cm3.h inclus dans le fichier stm32f10x.h
+La documentation sur le cortex M3 confirme que le groupe de registres ISER a pour fonction d’activer et de désactiver l’autorisation 
+du traitement des différentes interruptions. 
+Chaque bit de ces registres est associé à une interruption ce cortex M3 est de 81, ce groupe de registre est décomposé en 3 éléments 
+décrits dans la structure NVIC par un tableau.
+Pour activer l’interruption 28 il faut mettre le bit 28 du registre ISER[0] comme 
+NVIC->ISER[0] = NVIC->ISER[0] | (1 << 28);     OU     NVIC->ISER[0] = NVIC->ISER[0] | NVIC_ISER_28;
+Ça suffit pour activer une interruption au niveau du cœur et chaque irq a une priorité, c’est au niveau du registre IPR du NVIC. 
+Il existe le fichier core_cm3.h une union nommée IP permettant d’accéder directement à l’emplacement des bits de configuration des priorités. 
+Exemple : NVIC -> IP[28] fixe la priorité de l’interruption 28. 
+Les priorités sont codées sur 8 bits mais seul les bits 7 à 4 sont pris en considération. 
+Donc si on veut fixer la priorité à 7 de l’interruption 28 il faut ajouter le code : NVIC->IP[28] = NVIC->IP[28] | (7 << 4);
+
+
+[C]  écrire le code associé à l’interruption.
+Le programme ci-dessus permet au timer 2 de lancer une interruption et au cœur de la traiter. 
+Il faut à cela ajouter le code qui sera réalisé pendant cette interruption.
+
+La fonction d’interruption du timer 2 est prototypée par : void TIM2_IRQHandler(void);
+Le nom TIM2_IRQHandler est l’étiquette associée à l’adresse mémoire de l’interruption (déclarée dans le fichier stm32f10x.s). 
+Lors de la compilation, cette étiquette prend la valeur de l’adresse mémoire de la fonction TIM2_IRQHandler. 
+Ainsi, quand l’interruption survient, le processeur lit l’adresse contenue dans TIM2_IRQHandler et saute à cette adresse, 
+permettant ainsi l’exécution de la fonction.
+
+Revenons à la déclaration de la fonction d’interruption et ajoutons le code nécessaire au traitement que l’on souhaite réaliser. 
+Le but est de faire clignoter la LED branchée sur la broche 5 du port A, soit :
+void TIM2_IRQHandler(void){
+   GPIOA->ODR = GPIOA->ODR ^(1<<5);
+}
+Ce code n’est cependant pas opérationnel car l’interruption est toujours valide au niveau du périphérique et donc une 
+nouvelle interruption va immédiatement être relancée quand le traitement du handler sera terminé, bouclant ainsi 
+indéfiniment dans la fonction d’interruption.
+Il faut donc valider le traitement dans la fonction d’interruption en mettant à 0 le bit UIF du timer 2, soit :
+void TIM2_IRQHandler(void){
+   TIM2->SR &= ~TIM_SR_UIF;
+   GPIOA->ODR = GPIOA->ODR ^(1<<5);
+}
+Vous pouvez maintenant compiler et exécuter le code en debug pour observer le clignotement de la LED, ainsi que 
+l’activation de l’interruption.
+
+
+
+
+**********scruter ou interrompre un évènement**********
+Mais pourquoi s’embêter avec une interruption alors que mon code fait exactement la même chose qu’avant en scrutant l’état du timer ?
+
+C’est vrai, mais la scrutation est globalement inefficace car le processeur va passer la plupart de son temps à attendre qu’un état change, 
+alors qu’il pourrait faire autre chose !
+
+De plus, l’interruption permet un traitement plus réactif car le traitement va survenir dès que l’interruption se produit. 
+Alors que dans le cas de la scrutation, il faut attendre que toute la boucle soit parcourue avant de détecter le changement 
+(dans notre cas la boucle ne fait pas grand-chose, mais le traitement pourrait être beaucoup plus long). 
+Si le signal à observer change très vite, il se pourrait donc que la scrutation ne permette pas d’observer ce changement.
+Donc, essayez, dans la mesure du possible, de favoriser une implémentation avec des interruptions.!!!!!!
+*************************************************************************************************************************
+
+
+
+
+
+
+
+
+
+	

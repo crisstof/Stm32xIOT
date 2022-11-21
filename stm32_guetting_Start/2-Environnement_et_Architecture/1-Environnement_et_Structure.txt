@@ -1,0 +1,384 @@
+-----------------------------------------------------------------------------------------------------------------------------
+-----------------------------Mise en place de la structure-------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------------------------------------
+Microcontrôleur Nucleo-L476RG.(Flash:1024KB  RAM:96KB  RAM2:32KB)
+Microcontrôleur Nucleo-L073RZ.
+Microcontrôleur L476ZG
+
+
+Créer une application C/C++:
+Atollic/choisir son workspace_application (création du fichier /metadata)
+File>New C++ Project>name (application)
+	 Executable:
+          	Embedded C++ Project > Atollic ARM Tools (ce qui nous amène à choisir le stm32L476RG)
+		STM32L4>NUCLEO-L476RG  (standard C/C++)
+		STLink
+Création du projet (nous pouvons renommer le main.c (gcc) en main.cpp (g++)
+
+**************************TEST BLINKLED PROGRAMME AVEC LES REGISTRE**************************************************
+le Hello-world, faire clignoter la led avec la programmation par Registre
+dans le main ajouter le code:
+	/* CODE AJOUT */
+	  volatile unsigned int j =0;
+	  RCC -> AHB2ENR|= 1<<0;			//[datasheet]  [1]
+	  GPIOA->MODER &= 0xFFFFF7FF; 	 //[reference_manual]  [2]
+	 /* CODE FIN AJOUT */
+ while (1)
+  {
+	i++;
+
+	/* CODE AJOUT */
+	for (j= 0; j < 50000; j++)
+		GPIOA -> ODR= (1<<5); //on affecte 1 au bit du rang 5	[reference_manual]  [3]
+	                              //GPIOA -> BSRR= (1<<5);
+	    for (j = 0; j < 50000; j++)
+		GPIOA -> ODR= (0<<5); //PA5 à 0  ////GPIOA -> BSRR= (1<<21);}	[reference_manual]  [3]
+   /* CODE FIN AJOUT */
+
+  }
+
+*********************************************************************************************************************
+
+*******AJOUTER LA BIBLIOTHEQUE HAL POUR POUVOIR CREER NOTRE STRUCTURE DE PROGRAMME***********************************
+Copier et coller les fichiers HAL dans {Inc:.h/Src:.c}
+Librairies HAL cherche stm32lxx_hal_conf_template.h Copier/coller dans racine dossier Inc le fichier stm32lxx_hal_conf.h
+et ajouter au build le fichier
+Project/Properties dans C/C++ Build/Setting>Tool Settings>C Compiler>Directories>Include path ../Inc
+Project/Properties dans C/C++ Build/Setting>Tool Settings>C++ Compiler>Directories>Include path ../Inc
+
+//*********MODIFICATION SUR LA STRUCTURE HAL DEPUIS PROJET ORIG******************************************************
+//pour ne plus avoir de message d'erreur à la compilation
+*****ERREUR*****
+[1]
+hal_iwdg.c
+probleme LSI_STARTUP8TIME note declared changer par
+//#define HAL_IWDG_DEFAULT_TIMEOUT        (((6UL * 256UL * 1000UL) / LSI_VALUE) + ((LSI_STARTUP_TIME / 1000UL) + 1UL))
+#define HAL_IWDG_DEFAULT_TIMEOUT            48u
+[2]
+Probleme hal flash dans FLASH_SIZE ajout
+#define FLASH_SIZE_DATA_REGISTER           ((uint32_t)0x1FFF75E0) //A VOIR SUR L'ADRESSE
+   
+#if defined (STM32L451xx) || defined (STM32L452xx) || defined (STM32L462xx)
+#define FLASH_SIZE                         ((((*((uint16_t *)FLASH_SIZE_DATA_REGISTER)) == 0xFFFF)) ? (0x200 << 10) : \
+                                            (((*((uint16_t *)FLASH_SIZE_DATA_REGISTER)) & (0x0FFF)) << 10))
+#else
+#define FLASH_SIZE                         ((((*((uint16_t *)FLASH_SIZE_DATA_REGISTER)) == 0xFFFF)) ? (0x400 << 10) : \
+                                            (((*((uint16_t *)FLASH_SIZE_DATA_REGISTER)) & (0x0FFF)) << 10))
+#endif
+
+******AVERTISSEMENT**********
+stm32l4xx_||_usb.c
+USBx_DFIFO((uint32_t)ch_ep_num) = __UNALIGNED_UINT32_READ(pSrc);
+AVANT:
+HAL_StatusTypeDef USB_WritePacket(USB_OTG_GlobalTypeDef *USBx, uint8_t *src,
+                                  uint8_t ch_ep_num, uint16_t len)
+{
+
+
+  uint32_t USBx_BASE = (uint32_t)USBx;
+  uint8_t *pSrc = src;
+  uint32_t count32b;
+  uint32_t i;
+
+  count32b = ((uint32_t)len + 3U) / 4U;
+  for (i = 0U; i < count32b; i++)
+  {
+	  //avertissement pas de UNALIGNED_UINT32_READ
+    //USBx_DFIFO((uint32_t)ch_ep_num) = __UNALIGNED_UINT32_READ(pSrc);
+
+    pSrc++;
+    pSrc++;
+    pSrc++;
+    pSrc++;
+  }
+
+  return HAL_OK;
+}
+APRES:
+HAL_StatusTypeDef USB_WritePacket(USB_OTG_GlobalTypeDef *USBx, uint8_t *src,
+		uint8_t ch_ep_num, uint16_t len)
+{
+  /* Prevent unused argument(s) compilation warning */
+   uint32_t USBx_BASE = (uint32_t)USBx;
+
+  uint32_t count32b= 0 , index= 0;
+  count32b =  (len + 3) / 4;
+  for (index = 0; index < count32b; index++, src += 4)
+  {
+    USBx_DFIFO(ch_ep_num) = *((__packed uint32_t *)src);
+  }
+  return HAL_OK;
+}
+POUR LE CNS:
+/**
+  * @brief  USB_WritePacket : Writes a packet into the Tx FIFO associated 
+  *         with the EP/channel
+  * @param  USBx: Selected device           
+  * @param  src:  pointer to source buffer
+  * @param  ch_ep_num: endpoint or host channel number
+  * @param  len: Number of bytes to write
+  * @param  dma: USB dma enabled or disabled 
+  *          This parameter can be one of these values:
+  *           0 : DMA feature not used 
+  *           1 : DMA feature used  
+  * @retval HAL status
+  */
+HAL_StatusTypeDef USB_WritePacket(USB_OTG_GlobalTypeDef *USBx, uint8_t *src, uint8_t ch_ep_num, uint16_t len, uint8_t dma)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(USBx);
+  UNUSED(dma);
+  
+  uint32_t count32b= 0 , index= 0;
+  count32b =  (len + 3) / 4;
+  for (index = 0; index < count32b; index++, src += 4)
+  {
+    USBx_DFIFO(ch_ep_num) = *((__packed uint32_t *)src);
+  }
+  return HAL_OK;
+}
+
+AVERTISSEMENT******** implicit declaration of function __UNALIGNED_UINT32_WRITE sur stm32l4xx-||_usb.c
+AVANT
+/**
+  * @brief  USB_ReadPacket : read a packet from the RX FIFO
+  * @param  USBx  Selected device
+  * @param  dest  source pointer
+  * @param  len  Number of bytes to read
+  * @retval pointer to destination buffer
+  */
+void *USB_ReadPacket(USB_OTG_GlobalTypeDef *USBx, uint8_t *dest, uint16_t len)
+{
+  uint32_t USBx_BASE = (uint32_t)USBx;
+  uint8_t *pDest = dest;
+  uint32_t pData;
+  uint32_t i;
+  uint32_t count32b = (uint32_t)len >> 2U;
+  uint16_t remaining_bytes = len % 4U;
+
+  for (i = 0U; i < count32b; i++)
+  {
+    __UNALIGNED_UINT32_WRITE(pDest, USBx_DFIFO(0U)); //probleme
+    pDest++;
+    pDest++;
+    pDest++;
+    pDest++;
+  }
+
+  /* When Number of data is not word aligned, read the remaining byte */
+  if (remaining_bytes != 0U)
+  {
+    i = 0U;
+    __UNALIGNED_UINT32_WRITE(&pData, USBx_DFIFO(0U));
+
+    do
+    {
+      *(uint8_t *)pDest = (uint8_t)(pData >> (8U * (uint8_t)(i)));
+      i++;
+      pDest++;
+      remaining_bytes--;
+    } while (remaining_bytes != 0U);
+  }
+
+  return ((void *)pDest);
+}
+APRES:
+void *USB_ReadPacket(USB_OTG_GlobalTypeDef *USBx, uint8_t *dest, uint16_t len)
+{
+  uint32_t USBx_BASE = (uint32_t)USBx;
+  uint8_t *pDest = dest;
+  //uint32_t pData;
+  uint32_t i;
+  //uint32_t count32b = (uint32_t)len >> 2U;
+  uint32_t count32b = (len+3) / 4;
+  //uint16_t remaining_bytes = len % 4U;
+
+  for (i = 0U; i < count32b; i++, pDest += 4)
+  {
+   // __UNALIGNED_UINT32_WRITE(pDest, USBx_DFIFO(0U));
+
+    *(__packed uint32_t *)pDest = USBx_DFIFO(0U);
+    /*
+    pDest++;
+    pDest++;
+    pDest++;
+    pDest++;
+    */
+  }
+
+  /* When Number of data is not word aligned, read the remaining byte */
+ /*
+  if (remaining_bytes != 0U)
+  {
+    i = 0U;
+    //pas de fonction:
+    //__UNALIGNED_UINT32_WRITE(&pData, USBx_DFIFO(0U));
+
+    do
+    {
+      *(uint8_t *)pDest = (uint8_t)(pData >> (8U * (uint8_t)(i)));
+      i++;
+      pDest++;
+      remaining_bytes--;
+    } while (remaining_bytes != 0U);
+  }
+  */
+
+  return ((void *)pDest);
+}
+
+
+CNS:
+/**
+  * @brief  USB_ReadPacket : read a packet from the Tx FIFO associated 
+  *         with the EP/channel
+  * @param  USBx: Selected device  
+  * @param  src: source pointer
+  * @param  ch_ep_num: endpoint or host channel number
+  * @param  len: Number of bytes to read
+  * @param  dma: USB dma enabled or disabled 
+  *          This parameter can be one of these values:
+  *           0 : DMA feature not used 
+  *           1 : DMA feature used  
+  * @retval pointer to destination buffer
+  */
+void *USB_ReadPacket(USB_OTG_GlobalTypeDef *USBx, uint8_t *dest, uint16_t len)
+{
+  uint32_t index=0;
+  uint32_t count32b = (len + 3) / 4;
+  
+  for ( index = 0; index < count32b; index++, dest += 4 )
+  {
+    *(__packed uint32_t *)dest = USBx_DFIFO(0);
+    
+  }
+  return ((void *)dest);
+}
+
+
+
+UNUSED va vers stm32L4xx_hal_def.h  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#define UNUSED(X) (void)X      /* To avoid gcc/g++ warnings */
+sur ORIG nous avons application/common/defs.h
+//*********************************
+#ifndef UNUSED
+#define UNUSED(v)  ((void)(v))
+#endif
+//*********************************
+Même chose pour *USB_ReadPacket..
+***********************************
+
+
+**WARNINGS***********************************************************************************************************
+stm32l4xx_hal_uart.c
+ATOMIC_CLEAR_BIT(huart->Instance->CR3, USART_CR3_DMAT);
+Ajouter dans le Driver/CMSIS/Device/ST/STM32L4xx/Include
+#define CLEAR_BIT(REG, BIT)   ((REG) &= ~(BIT))
+#define ATOMIC_CLEAR_BIT(REG, BIT)   ((REG) &= ~(BIT))
+***********************************************************************************************************
+avertissement dans HAL_UART_Receive
+/* Enable the Transmit Data Register Empty interrupt */
+    ATOMIC_SET_BIT(huart->Instance->CR1, USART_CR1_TXEIE);
+Ajouter le define dans  Driver/CMSIS/Device/ST/STM32L4xx/Include
+#define SET_BIT(REG, BIT)     ((REG) |= (BIT))
+#define ATOMIC_SET_BIT(REG, BIT)     ((REG) |= (BIT))
+
+***********************************************************************************************************
+maintenant tout est ok si l'on utilise une bibliothèque de HAL qui ne fonctionne pas.
+Nous avons donc les traces
+
+
+*****************************************************************************************************************
+		ACTUELLEMENT NOUS AVONS LE PROJET AVEC BIBLIOTHEQUE HAL AVEC 0 ERREUR 0 AVERTISSEMENT		*
+Nous pouvons maintenant travailler avec le micro-contrôleur							*
+*****************************************************************************************************************
+
+//test la carte nucleo avec led clignotante
+main.cpp
+/* Includes */
+#include "stm32l4xx.h"
+
+#include "stm32l4xx_hal.h" //Delay
+#include "stm32l4xx_hal_gpio.h"
+#include "stm32l4xx_hal_gpio_ex.h"
+
+/* Variable statique */
+static GPIO_InitTypeDef init ;//variable de ce type pour l’initialisation
+
+/**
+**===========================================================================
+**
+**  Abstract: main program
+**
+**===========================================================================
+*/
+int main(void)
+{
+  int i = 0;
+
+  /**
+  *  IMPORTANT NOTE!
+  *  The symbol VECT_TAB_SRAM needs to be defined when building the project
+  *  if code has been located to RAM and interrupts are used. 
+  *  Otherwise the interrupt table located in flash will be used.
+  *  See also the <system_*.c> file and how the SystemInit() function updates 
+  *  SCB->VTOR register.  
+  *  E.g.  SCB->VTOR = 0x20000000;  
+  */
+
+  /* TODO - Add your application code here */
+   HAL_Init() ; //Initialisation comme ma prise en compte des fonctions comme le Delay.
+  // SystemClock_config();
+   __HAL_RCC_GPIOA_CLK_ENABLE(); //valide la clock GPIOA
+
+   /*Initialise le port */
+   init.Mode = GPIO_MODE_OUTPUT_PP  ;
+   init.Pull = GPIO_PULLUP;
+   init.Speed = GPIO_SPEED_FREQ_HIGH ;//HIGH, MEDIUM
+   init.Pin = GPIO_PIN_5 ;
+   //INITIALISATION
+   HAL_GPIO_Init(GPIOA, &init) ;
+
+
+   /* Infinite loop */
+   while (1)
+   {
+ 	i++;
+ 	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+ 	HAL_Delay(5000);
+   }
+ }
+********************************************************************
+A PARTIR DE LA NOUS AVONS LE PROGRAMME AVEC HAL ET UN TEST BLINKLED*
+********************************************************************
+----------------------------------------------------------------------------------------------------------
+Mise en place de l'architecture C/C++ sur stm32
+===============================================
+Architecture des dossiers
+application
+	>Binaries
+	>Includes
+	>Drivers
+		>CMSIS (module coeur et dispositif du coeur ARM implémenté dans ce produit stm32)
+		>Modules (SD, led, alimentation, gps ...)
+		>Sensors (sources des capteurs pour des fonctions de datalogger)
+		>STM32L4xx_HAL_Driver (couche d'abstraction offrant un ensemble d'API maximise la portabilité)
+	>src (main)
+	>Debug
+	>boards (implémentation de la carte électronique autour du stm32)
+	>codecs (protocole utilisé dans les transmissions)
+	>common (implémentations communes comme le datetime, logger, error ...)
+	>config_json
+	>config_json_template
+	>Inc
+	>script
+	>startup (utilisation du démarrage/arrêt/veille)
+	.application.elf.launch
+	.stm32l4_flash.Id
+
+
+
+
+
+
+

@@ -1,0 +1,151 @@
+!SESSION 2022-11-18 14:14:38.023 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.8.0_181
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=fr_FR
+Command-line arguments:  -os win32 -ws win32 -arch x86
+
+!ENTRY com.atollic.truestudio.productmanager 1 0 2022-11-18 14:18:52.938
+!MESSAGE Loading product manager
+
+!ENTRY com.atollic.truestudio.productmanager 1 0 2022-11-18 14:18:52.938
+!MESSAGE OS info: Windows 10, 10.0, x86
+
+!ENTRY TrueSTUDIO 1 0 2022-11-18 14:18:53.654
+!MESSAGE Target: STM32, Version: 9.3.0, Build date: 20190212-0734, Installation dir: /C:/Program Files (x86)/Atollic/TrueSTUDIO for STM32 9.3.0/ide/
+
+!ENTRY TrueSTUDIO 1 0 2022-11-18 14:18:53.686
+!MESSAGE Workspace: F:\PROJECTS\stm32_iot\github\Stm32xIOT\stm32_programs\embedded\STM32L476RG\software
+
+!ENTRY org.eclipse.jface 2 0 2022-11-18 14:18:55.315
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2022-11-18 14:18:55.315
+!MESSAGE A conflict occurred for ALT+CTRL+T:
+Binding(ALT+CTRL+T,
+	ParameterizedCommand(Command(org.eclipse.team.svn.ui.command.EditPropertiesCommand,Show Properties,
+		,
+		Category(org.eclipse.team.svn.ui.command.category,SVN,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@1b6fb14,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+Binding(ALT+CTRL+T,
+	ParameterizedCommand(Command(org.eclipse.tm.terminal.connector.local.command.launch,Open Local Terminal on Selection,
+		,
+		Category(org.eclipse.tm.terminal.view.ui.commands.category,Terminal Commands,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@ee08f5,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+
+!ENTRY com.atollic.truestudio.integration.processorexpert 0 0 2022-11-18 14:18:59.397
+!MESSAGE Atollic TrueSTUDIO Processor Expert integration is up.
+
+!ENTRY edu.hawaii.ics.csdl.jupiter 1 0 2022-11-18 14:18:59.426
+!MESSAGE Code Review is up.
+
+!ENTRY org.eclipse.egit.ui 2 0 2022-11-18 14:18:59.537
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\Administrateur'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY com.atollic.truestudio.common.wizards 4 0 2022-11-18 14:19:53.721
+!MESSAGE Failed to find the correct FPU ABI, falling back to Soft. Value: 
+
+!ENTRY com.atollic.truestudio.common.wizards 4 0 2022-11-18 14:19:55.648
+!MESSAGE Failed to find the correct FPU ABI, falling back to Soft. Value: 
+
+!ENTRY com.atollic.truestudio.common.wizards 4 0 2022-11-18 14:19:59.025
+!MESSAGE Failed to find the correct FPU ABI, falling back to Soft. Value: 
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-11-18 14:23:06.188
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-11-18 14:23:06.250
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-11-18 14:23:06.281
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-11-18 14:23:07.222
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-11-18 14:23:08.144
+!MESSAGE application needs property 'com.atollic.truestudio.general.runtimelib.55574285' fixed. Fixing to 'com.atollic.truestudio.ld.general.cclib.CCSmallCSmall'.
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-11-18 14:23:08.160
+!MESSAGE Failed to get device info (Debug) for project application
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-11-18 14:23:08.160
+!MESSAGE Failed to get device info (Debug) for project application
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-11-18 14:23:08.160
+!MESSAGE Failed to get device info (Debug) for project application
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-11-18 14:23:08.176
+!MESSAGE Failed to get device info (Debug) for project application
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-11-18 14:23:08.191
+!MESSAGE application needs property 'com.atollic.truestudio.general.runtimelib.847282739' fixed. Fixing to 'com.atollic.truestudio.ld.general.cclib.CCSmallCSmall'.
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-11-18 14:23:08.191
+!MESSAGE Failed to get device info (Release) for project application
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-11-18 14:23:08.207
+!MESSAGE Failed to get device info (Release) for project application
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-11-18 14:23:08.222
+!MESSAGE Failed to get device info (Release) for project application
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-11-18 14:23:08.222
+!MESSAGE Failed to get device info (Release) for project application
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-11-18 14:23:09.299
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-11-18 14:23:09.315
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-11-18 14:23:09.331
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-11-18 14:23:09.347
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-11-18 14:23:09.660
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-11-18 14:23:09.660
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-11-18 14:23:37.902
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-11-18 14:23:39.986
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-11-18 14:24:07.173
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-11-18 14:24:09.120
+!MESSAGE Failed to find device info
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-11-18 14:25:38.266
+!MESSAGE Indexed 'application' (3 sources, 121 headers) in 16 sec: 23 998 declarations; 35 903 references; 0 unresolved inclusions; 153 syntax errors; 77 unresolved names (0,13 %)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-11-18 14:44:56.232
+!MESSAGE Indexed 'application' (109 sources, 317 headers) in 25,4 sec: 47 849 declarations; 212 684 references; 0 unresolved inclusions; 153 syntax errors; 178 unresolved names (0,068 %)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-11-21 09:23:02.621
+!MESSAGE Indexed 'application' (109 sources, 319 headers) in 30,2 sec: 47 927 declarations; 212 983 references; 0 unresolved inclusions; 153 syntax errors; 81 unresolved names (0,031 %)
+
+!ENTRY com.atollic.hardwaredebug.launch 2 0 2022-11-21 09:26:14.725
+!MESSAGE Won't launch debug session since we failed to locate the binary.
+
+!ENTRY org.eclipse.ui 4 4 2022-11-21 09:26:42.253
+!MESSAGE Referenced part does not exist yet: org.eclipse.ui.views.TaskList.
+
+!ENTRY com.atollic.truestudio.productmanager 1 0 2022-11-21 10:11:41.183
+!MESSAGE Unloading product manager

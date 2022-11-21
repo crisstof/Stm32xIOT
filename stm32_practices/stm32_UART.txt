@@ -1,0 +1,233 @@
+		*********************************************************
+		*   Communication avec une stm32 par le port UART	*
+		*********************************************************
+Communication1 PC via dsd Tec ------> raspberryPi GPIO Python pySerial (linux10 (buster)) python2 ok
+CP2102 3.3v                            GPIO 3.3v
+3v3
+gnd
+txd----------------------------------RX(15)
+rxd----------------------------------TX(14)
+gnd----------------------------------GND
+5v
+
+----------------------------------------------------------------------------
+CP2102 avec termite vs realterm on envoie des type bytes
+nous pouvons envoyez que du texte transformé en bytes pas directement en string, ni char.
+---------------------------------------
+emetteur_encode.py   							Python3
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Test du port série
+import serial
+message = "coucou"
+ser = serial.Serial("/dev/ttyS0" , baudrate=9600,  timeout=10.0)
+print("Port serie :  " + ser.name)
+ser.write(message.encode("utf-8"))
+ser.close()
+--------------------------------------------
+recepteur_encode.py ------------TESTER PC---Raspberry			Python3
+Raspberry:
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Test du port série
+#RPi_2 Recepteur
+import serial
+ser = serial.Serial("/dev/ttyS0", baudrate=9600, timeout=10.0)
+print("Port serie :  " + ser.name)
+message = ser.readline()
+print("recu octet: ", len(message)) #8
+print(type(message))  #<class 'bytes'>
+print(message)#b'coucou\r\n'
+chaine = message.decode()
+print(type(chaine)) #<class 'str'>
+print("voici le message recu: "+ chaine) #message recu: coucou
+ser.close()
+--------------------------------------------------------
+emetteur_string_python2.py						Python2
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import serial
+message = "hello world"
+ser = serial.Serial("/dev/ttyS0" , baudrate=19200,  timeout=10.0)
+print("Port serie :  " + ser.name)
+print(type(message))
+print("voici le message envoyé: " + message)
+byte_sent = ser.write(message)
+print("envoyer :", byte_sent, " octets")
+
+
+-----------------------------------------------------------------
+recepteur_string_python2.py						Python2
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Test du port série
+import serial
+ser = serial.Serial("/dev/ttyS0" , baudrate=19200,  timeout=10.0)
+print("Port serie :  " + ser.name)
+message = ser.readline()
+print(type(message))
+print("voici le message reçu: "+ message)
+print("recu octets : ", len(message))
+
+-------------------------------------------------------------------------------
+RaspberryPi		Nucleo
+GND-----------------------CN7(20)  
+TXD-----------------------CN10(33) PA10 USART1_RX
+RXD-----------------------CN10(21) PA9 USART1_TX
+Et oui pas dans la doc nucleo mais dans [datasheet]
+-------------------------------------------------------------------------------
+************************Nous pouvons passer  à UART STM32***********************
+3 Principes:
+3 modes pour recevoir avec l’uart :
+Polling : (opération bloquante la cpu est bloqué) si l’opération est appelée la cpu ne charge 
+plus rien tant que la réception est en cours. Et riense fait, si la bien reçu l’information 
+d’être en réception car la cpu peut être occupée à autre chose.
+
+Interupt : la tâche du microcontrôleur est interrompue, une interruption se lève et la cpu 
+procède à l’écoute du port et de la réception de la trame et ensuite la cpu reprend ses 
+activités là où elle est à laisser. Aucune réception ne sera manquée.
+Il faut gérer l’interruption et la fonction de callback:
+
+DMA : le mode DMA c’est ce qui a de mieux pour l’approche d’une application temps réel. 
+Prise en compte :
+Par voie d’interruption la cpu est mobilisé tout le temps de l’interruption donc tant que 
+des trames arrivent la cpu ne fait pas autres choses elle est bloquée.
+Alors ici la DMA à chaque réception de trame elle lève une interruption lorsque 
+la trame n’est pas réussite, mais complète ce qui permet de gagner un peu de temps.
+********************************************************************************
+UART à base direct dans les registres
+--------------------------------------
+RXD<-----------------------CN10(21) PA9 USART1_TX
+avec le programme application/keil/UART [keil_uart] avec que les registres nous 
+pouvons envoyer que un caractère et python2 reçoit un c_str et un python3 reçoit un byte.
+Mais je n'ai pas réussit à envoyer une chaine de caractère char hello[7]={'H','e','l','l','o'}; 
+un problème de registre qui n'a accepté que un caractère  
+------------------------------------------------------------------------------------------------
+UART à base d'interruption
+---------------------------
+Nous avons générer le code par stm32cubeMX [generate c/c++]
+avec le programme application/keil/UART_IRQ_NVIC avec que les méthode uart.h et stm32l4xx_hal_uart.c
+nous pouvons envoyer une chaine de caractère:
+char *welcome= "Bonjour!";
+HAL_UART_Transmit(&huart1, (uint8_t *)welcome, strlen(welcome), HAL_MAX_DELAY);
+char hello[5] = {'H','e','l','l','o'};
+HAL_UART_Transmit(&huart1, (uint8_t *)hello, strlen(hello), HAL_MAX_DELAY);
+Pour envoyer un int
+int val=50;
+char buf[1];
+sprintf(buf,"valeur: %d", val);
+HAL_UART_Transmit(&huart1, (uint8_t *)buf, strlen(buf), HAL_MAX_DELAY);
+----------Reception aussi avec un programme C-------------
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
+#include <wiringPi.h>
+#include <wiringSerial.h>
+int main ()
+{  
+  int fd ;
+  char ch[8];
+  int i=0;
+   fd = serialOpen ("/dev/ttyS0", 9600);
+   wiringPiSetup ();
+    printf("\n-----start reception----\n");
+      //***on a que la premier lettre
+      //char c = serialGetchar(fd);
+      //printf("%c \n", c);
+   for(i=0; i < 8 ; i++)
+   {         
+       ch[i] = serialGetchar(fd);
+       printf ("%c \n", ch[i]) ;
+   }
+   printf("\n la chaine est: %s", ch);
+   printf ("\n-------end reception----\n") ;
+    serialClose(fd);
+    return 0 ;
+    }
+----------------------------------------------------------------
+GND-----------------------CN7(20)  
+TXD-----------------------CN10(23) PA10 USART1_RX
+RXD-----------------------CN10(21) PA9 USART1_TX
+
+Nous avons générer le code par stm32cubeMX [generate c/c++] afin d'avoir la configuration et architecture.
+avec le programme application/keil/UART_IRQ_NVIC avec que les méthode uart.h et stm32l4xx_hal_uart.c
+avec le programme application/CubeMX/UART_IRQ_NVIC
+nous pouvons envoyer une chaine de caractère:
+---------stm32-----------Nous pouvons rajouter le code---------------
+#define BUFFERDATA 2
+#define BUFFERRX 50
+
+char *welcome= "Bonjour!";
+char cartInit[30] = "carte INIT"; //envoi avant while
+char rxOk[30] = "le message est recu est:"; //revoie le message reçc est rxBuffer
+char rxBuffer[BUFFERRX];
+#define BUFFERDATA 2
+#define BUFFERRX 50
+
+char cartInit[30] = "carte INIT"; //envoi avant while
+char rxOk[30] = "le message est recu est:"; //revoie le message reçc est rxBuffer
+char rxBuffer[BUFFERRX];
+uint8_t newmsg=0, rxData[BUFFERDATA], rxIndex=0, enter=13;
+HAL_UART_Transmit(&huart1, (uint8_t *)cartInit, strlen(cartInit), HAL_MAX_DELAY);//premier envoie
+HAL_UART_Receive_IT(&huart1, rxData,1); //reception de la chaine pour 1 Bytes = 1 octets 
+//Déclenche une interruption dans le NVIC ce qui appelle un Handler
+//on surcharge la méthode Handler
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+	
+	if(huart->Instance == USART1){
+		if(rxData[0] != enter){
+				rxBuffer[rxIndex] = rxData[0]; //copie dans l'incide 0
+			  rxIndex++;                     //rxDate dans le buffer qui est un tableau de 50
+		}else{
+			 newmsg=1;//fin 
+			 rxIndex=0;
+		}
+		HAL_UART_Receive_IT(&huart1, rxData,1);//ensuite on rappelle receive et on reçoi le deuxieme octet
+	}
+}
+
+//puis quand tout est acquis dans le buffer dans le while on envoit tout:
+if(newmsg){
+		  HAL_UART_Transmit(&huart1, (uint8_t *)rxOk, strlen(rxOk), 500);	
+			HAL_UART_Transmit(&huart1, (uint8_t *)rxBuffer, strlen(rxBuffer), 500);
+			
+			for (int i=0; i< BUFFERRX; i++){ rxBuffer[i]=0; }
+			   //nettoyer le tableau rxbuffer
+			newmsg=0;
+		}
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

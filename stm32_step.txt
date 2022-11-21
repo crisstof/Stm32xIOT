@@ -1,0 +1,69 @@
+	*************************************************
+	* 	1-Documentations - logiciels 		*
+	*************************************************
+PS: En complément du stm32_guetting-start et step_evolution!!!!
+
+Documentations sur le datasheet du stm32:
+----------------------------------------
+um utilisateur manual.
+rm reference manual.
+pm programming manual.
+dm datasheet manual peut être pm, rm.
+
+nucleo-lxx : 
+	présente les différentes cartes de développement à base de stm32 et leurs mémoires
+umxxx-stm32-nucleo64-boards-mb1136-stmelectronics:
+	présente les shémas et pins de la carte nucléo
+rmxxx-stm32lxx-advanced-arm-based-32bits-mcusstmelectronics:
+       présente et fournie les fonctions et le registres pour activer quels bits actionner.
+       pour le bas niveau.
+stm32lxxx:
+       fournit les caractéristiques et entrées/sorties du micro-contrôleur stm32
+pmxxx-cortex m0-programming-manual-for-stm32l0-stm32g0-stm32wl:
+       présente les fonctions de programmation.
+
+on trouve la documentation sur : https://www.st.com/content/st_com/en.html
+https://www.st.com/en/microcontrollers-microprocessors/stm32l476rg.html#documentation
+https://www.st.com/en/microcontrollers-microprocessors/stm32l073rz.html#documentation
+
+Driver STLink de communication stlink009:
+https://www.st.com/content/st_com/en/products/development-tools/software-development-tools
+/stm32-software-development-tools/stm32-utilities/stsw-link009.html
+
+Librairie HAL, qui est une librairie générique pour éviter le plus possible de programmer avec les registres:
+https://github.com/STMicroelectronics/STM32CubeL4
+
+
+Logiciels pour programmer le stm32:
+----------------------------------
+CubeMx configure le stm32 avec les dernière mise à jour (horloge, définir le GPIO ...)
+CubeMxIDE 	pour programmer le stm32 en C/C++ (pratique mais attention aux parties dédiées car votre code risque d'être supprimé).
+Keil     	le plus simple logiciel basic sans prise de tête, plutôt programmation registre.
+Atollic   	de TrueStudio c'est le plus complet, des possibilités en associant la librairie HAL sur stm32.
+Visual Studio 	il apporte de la standardisation le plus utilisé des IDE (code avec platformIO et HAL pour le moment non testé).
+
+
+	*************************************************
+	* 	2- Le Hello-World du stm32 		*
+	*************************************************
+stm32_guetting-start + stm32_programs STM32L476RG FLASH: 1024KB  RAM:96KB  RAM2:32KB
+1-Mise en place de l'environnement +  Faire clignoter une led en mode registre:
+2-Environnement_et_Architecture avec un test blinkLed hal et mise en place de l'arborescence des répertoires
+
+	*************************************************
+	* 	3- Le Bootloader du stm32 		*
+	*************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
