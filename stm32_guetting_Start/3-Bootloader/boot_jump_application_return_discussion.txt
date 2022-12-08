@@ -1,0 +1,67 @@
+bootloader  0x08000000
+application 0x0800C000
+
+typedef void (*pFunction)(void);
+pFunction JumpToApplication;
+uint32_t jumpAddress;
+
+// Initialize the user application Stack Pointer
+__set_MSP(*(__IO uint32_t*) APPLICATION_ADDRESS);
+
+// Jump to the user application
+// The stack pointer lives at APPLICATION_ADDRESS
+// The reset vector is at APPLICATION_ADDRESS + 4
+
+jumpAddress = *(__IO uint32_t*) (APPLICATION_ADDRESS + 4);
+JumpToApplication = (pFunction) jumpAddress;
+ 
+
+JumpToApplication();
+
+
+Fonctionnement revenir depuis l'application vers bootloader
+-----------------------------------------------------------
+.text.NVIC_SystemReset
+                0x080004c4       0x30 src\main.o
+ .text.mainFromUserSpace
+                0x080004f4       0xc8 src\main.o
+ .text.SendUartByte
+                0x080005bc       0x14 src\main.o
+
+typedef void (*pFunction)(void);
+pFunction JumpToApplication;
+uint32_t jumpAddress;
+
+// Initialize the bootloader Stack Pointer
+__set_MSP(*(__IO uint32_t*) 0x08000000);
+
+
+// Jump to the bootloader
+
+jumpAddress = *(__IO uint32_t*) (0x080004f4);
+JumpToBootloader = (pFunction) jumpAddress;
+JumpToBootloader();
+
+
+--------------
+even pair   odd impaire
+
+l'adresse de code est 16bits est toujours impaire le cortex M3 ne peut pas exécuter 
+de code ARM en adresse paire est sera fault.
+
+
+Personnellement, pour revenir au chargeur de démarrage, 
+je réinitialiserais probablement simplement le processeur, 
+car il y a moins de chances de le mettre dans un état fault. 
+Chiffrer les horloges, les interruptions, les vecteurs, etc.
+// Jump to the bootloader
+jumpAddress = (uint32_t) 0x080004f5; // 0x4f4 + 1
+JumpToBootloader = (pFunction) jumpAddress;
+JumpToBootloader();
+
+
+
+
+
+
+

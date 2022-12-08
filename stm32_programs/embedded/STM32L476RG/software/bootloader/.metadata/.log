@@ -1,0 +1,588 @@
+!SESSION 2022-11-24 15:13:42.897 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.8.0_181
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=fr_FR
+Command-line arguments:  -os win32 -ws win32 -arch x86
+
+!ENTRY com.atollic.truestudio.productmanager 1 0 2022-11-24 15:14:19.205
+!MESSAGE Loading product manager
+
+!ENTRY com.atollic.truestudio.productmanager 1 0 2022-11-24 15:14:19.215
+!MESSAGE OS info: Windows 10, 10.0, x86
+
+!ENTRY TrueSTUDIO 1 0 2022-11-24 15:14:20.485
+!MESSAGE Target: STM32, Version: 9.3.0, Build date: 20190212-0734, Installation dir: /C:/Program Files (x86)/Atollic/TrueSTUDIO for STM32 9.3.0/ide/
+
+!ENTRY TrueSTUDIO 1 0 2022-11-24 15:14:20.512
+!MESSAGE Workspace: F:\PROJECTS\stm32_iot\github\Stm32xIOT\stm32_programs\embedded\STM32L476RG\software\bootloader
+
+!ENTRY org.eclipse.jface 2 0 2022-11-24 15:14:22.222
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2022-11-24 15:14:22.222
+!MESSAGE A conflict occurred for ALT+CTRL+T:
+Binding(ALT+CTRL+T,
+	ParameterizedCommand(Command(org.eclipse.team.svn.ui.command.EditPropertiesCommand,Show Properties,
+		,
+		Category(org.eclipse.team.svn.ui.command.category,SVN,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@1b6fb14,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+Binding(ALT+CTRL+T,
+	ParameterizedCommand(Command(org.eclipse.tm.terminal.connector.local.command.launch,Open Local Terminal on Selection,
+		,
+		Category(org.eclipse.tm.terminal.view.ui.commands.category,Terminal Commands,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@ee08f5,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+
+!ENTRY com.atollic.truestudio.integration.processorexpert 0 0 2022-11-24 15:14:26.233
+!MESSAGE Atollic TrueSTUDIO Processor Expert integration is up.
+
+!ENTRY org.eclipse.egit.ui 2 0 2022-11-24 15:14:26.493
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\Administrateur'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY edu.hawaii.ics.csdl.jupiter 1 0 2022-11-24 15:14:26.528
+!MESSAGE Code Review is up.
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-11-24 15:16:36.883
+!MESSAGE Indexed 'application' (109 sources, 319 headers) in 20,5 sec: 47 927 declarations; 212 983 references; 0 unresolved inclusions; 153 syntax errors; 81 unresolved names (0,031 %)
+
+!ENTRY org.eclipse.ui.intro 4 0 2022-11-24 15:27:21.484
+!MESSAGE C:\Program Files (x86)\Atollic\TrueSTUDIO for STM32 9.3.0\welcome\concept2.xhtml (Le chemin d’accès spécifié est introuvable)
+!STACK 0
+java.io.FileNotFoundException: C:\Program Files (x86)\Atollic\TrueSTUDIO for STM32 9.3.0\welcome\concept2.xhtml (Le chemin d’accès spécifié est introuvable)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at java.io.FileInputStream.<init>(FileInputStream.java:93)
+	at sun.net.www.protocol.file.FileURLConnection.connect(FileURLConnection.java:90)
+	at sun.net.www.protocol.file.FileURLConnection.getInputStream(FileURLConnection.java:188)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityManager.setupCurrentEntity(XMLEntityManager.java:623)
+	at com.sun.org.apache.xerces.internal.impl.XMLVersionDetector.determineDocVersion(XMLVersionDetector.java:148)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:806)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:771)
+	at com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(XMLParser.java:141)
+	at com.sun.org.apache.xerces.internal.parsers.DOMParser.parse(DOMParser.java:243)
+	at com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderImpl.parse(DocumentBuilderImpl.java:339)
+	at javax.xml.parsers.DocumentBuilder.parse(DocumentBuilder.java:177)
+	at org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser.parse(IntroContentParser.java:94)
+	at org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser.<init>(IntroContentParser.java:56)
+	at org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage.loadChildren(AbstractIntroPage.java:468)
+	at org.eclipse.ui.internal.intro.impl.model.AbstractIntroContainer.getChildren(AbstractIntroContainer.java:78)
+	at org.eclipse.ui.internal.intro.impl.model.IntroSearchParticipant.addPage(IntroSearchParticipant.java:173)
+	at org.eclipse.ui.internal.intro.impl.model.IntroSearchParticipant.addDocument(IntroSearchParticipant.java:159)
+	at org.eclipse.help.internal.search.SearchIndex.addDocument(SearchIndex.java:223)
+	at org.eclipse.help.internal.search.IndexingOperation.addDocuments(IndexingOperation.java:252)
+	at org.eclipse.help.internal.search.IndexingOperation.addNewDocuments(IndexingOperation.java:159)
+	at org.eclipse.help.internal.search.IndexingOperation.execute(IndexingOperation.java:106)
+	at org.eclipse.help.internal.search.LocalSearchManager.updateIndex(LocalSearchManager.java:630)
+	at org.eclipse.help.internal.search.LocalSearchManager.ensureIndexUpdated(LocalSearchManager.java:604)
+	at org.eclipse.help.internal.search.federated.IndexerJob.run(IndexerJob.java:32)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.ui.intro 4 0 2022-11-24 15:27:22.510
+!MESSAGE C:\Program Files (x86)\Atollic\TrueSTUDIO for STM32 9.3.0\welcome\concept1.xhtml (Le chemin d’accès spécifié est introuvable)
+!STACK 0
+java.io.FileNotFoundException: C:\Program Files (x86)\Atollic\TrueSTUDIO for STM32 9.3.0\welcome\concept1.xhtml (Le chemin d’accès spécifié est introuvable)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(FileInputStream.java:195)
+	at java.io.FileInputStream.<init>(FileInputStream.java:138)
+	at java.io.FileInputStream.<init>(FileInputStream.java:93)
+	at sun.net.www.protocol.file.FileURLConnection.connect(FileURLConnection.java:90)
+	at sun.net.www.protocol.file.FileURLConnection.getInputStream(FileURLConnection.java:188)
+	at com.sun.org.apache.xerces.internal.impl.XMLEntityManager.setupCurrentEntity(XMLEntityManager.java:623)
+	at com.sun.org.apache.xerces.internal.impl.XMLVersionDetector.determineDocVersion(XMLVersionDetector.java:148)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:806)
+	at com.sun.org.apache.xerces.internal.parsers.XML11Configuration.parse(XML11Configuration.java:771)
+	at com.sun.org.apache.xerces.internal.parsers.XMLParser.parse(XMLParser.java:141)
+	at com.sun.org.apache.xerces.internal.parsers.DOMParser.parse(DOMParser.java:243)
+	at com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderImpl.parse(DocumentBuilderImpl.java:339)
+	at javax.xml.parsers.DocumentBuilder.parse(DocumentBuilder.java:177)
+	at org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser.parse(IntroContentParser.java:94)
+	at org.eclipse.ui.internal.intro.impl.model.loader.IntroContentParser.<init>(IntroContentParser.java:56)
+	at org.eclipse.ui.internal.intro.impl.model.AbstractIntroPage.loadChildren(AbstractIntroPage.java:468)
+	at org.eclipse.ui.internal.intro.impl.model.AbstractIntroContainer.getChildren(AbstractIntroContainer.java:78)
+	at org.eclipse.ui.internal.intro.impl.model.IntroSearchParticipant.addPage(IntroSearchParticipant.java:173)
+	at org.eclipse.ui.internal.intro.impl.model.IntroSearchParticipant.addDocument(IntroSearchParticipant.java:159)
+	at org.eclipse.help.internal.search.SearchIndex.addDocument(SearchIndex.java:223)
+	at org.eclipse.help.internal.search.IndexingOperation.addDocuments(IndexingOperation.java:252)
+	at org.eclipse.help.internal.search.IndexingOperation.addNewDocuments(IndexingOperation.java:159)
+	at org.eclipse.help.internal.search.IndexingOperation.execute(IndexingOperation.java:106)
+	at org.eclipse.help.internal.search.LocalSearchManager.updateIndex(LocalSearchManager.java:630)
+	at org.eclipse.help.internal.search.LocalSearchManager.ensureIndexUpdated(LocalSearchManager.java:604)
+	at org.eclipse.help.internal.search.federated.IndexerJob.run(IndexerJob.java:32)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+
+!ENTRY org.eclipse.help.base 4 4 2022-11-24 15:27:23.240
+!MESSAGE Help documentation could not be indexed completely.
+!SUBENTRY 1 org.eclipse.help.base 4 4 2022-11-24 15:27:23.240
+!MESSAGE Help document /com.atollic.truestudio.pro.arm.doc/welcome/concept2.xhtml cannot be opened.
+!SUBENTRY 1 org.eclipse.help.base 4 4 2022-11-24 15:27:23.240
+!MESSAGE Help document /com.atollic.truestudio.pro.arm.doc/welcome/concept1.xhtml cannot be opened.
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-11-24 15:42:53.118
+!MESSAGE Indexed 'Bootloader' (109 sources, 319 headers) in 18,9 sec: 47 927 declarations; 212 983 references; 0 unresolved inclusions; 153 syntax errors; 81 unresolved names (0,031 %)
+
+!ENTRY com.atollic.hardwaredebug.launch 2 0 2022-11-29 11:14:52.102
+!MESSAGE Won't launch debug session since we failed to locate the binary.
+
+!ENTRY org.eclipse.ui 4 4 2022-11-29 11:22:02.659
+!MESSAGE Referenced part does not exist yet: org.eclipse.ui.views.TaskList.
+
+!ENTRY org.eclipse.cdt.dsf 4 10005 2022-11-29 15:09:09.631
+!MESSAGE Request for monitor: 'RequestMonitor (org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor@1891f43): Status ERROR: org.eclipse.cdt.dsf.gdb code=10004 Failed to execute MI command:
+-interpreter-exec console kill
+Error message from debugger back end:
+Cannot execute this command while the target is running.\nUse the "interrupt" command to stop the target\nand then try again. java.lang.Exception: Cannot execute this command while the target is running.\nUse the "interrupt" command to stop the target\nand then try again.' resulted in an error.
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10004 2022-11-29 15:09:09.631
+!MESSAGE Failed to execute MI command:
+-interpreter-exec console kill
+Error message from debugger back end:
+Cannot execute this command while the target is running.\nUse the "interrupt" command to stop the target\nand then try again.
+!STACK 0
+java.lang.Exception: Cannot execute this command while the target is running.\nUse the "interrupt" command to stop the target\nand then try again.
+	at org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl$RxThread.processMIOutput(AbstractMIControl.java:1022)
+	at org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl$RxThread.run(AbstractMIControl.java:851)
+
+!ENTRY org.eclipse.cdt.dsf 4 10005 2022-11-29 15:09:12.014
+!MESSAGE Request for monitor: 'RequestMonitor (org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor@151c091): Status ERROR: org.eclipse.cdt.dsf.gdb code=10004 Failed to execute MI command:
+-interpreter-exec console kill
+Error message from debugger back end:
+Cannot execute this command while the target is running.\nUse the "interrupt" command to stop the target\nand then try again. java.lang.Exception: Cannot execute this command while the target is running.\nUse the "interrupt" command to stop the target\nand then try again.' resulted in an error.
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10004 2022-11-29 15:09:12.014
+!MESSAGE Failed to execute MI command:
+-interpreter-exec console kill
+Error message from debugger back end:
+Cannot execute this command while the target is running.\nUse the "interrupt" command to stop the target\nand then try again.
+!STACK 0
+java.lang.Exception: Cannot execute this command while the target is running.\nUse the "interrupt" command to stop the target\nand then try again.
+	at org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl$RxThread.processMIOutput(AbstractMIControl.java:1022)
+	at org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl$RxThread.run(AbstractMIControl.java:851)
+
+!ENTRY org.eclipse.ui 4 4 2022-11-29 15:09:55.088
+!MESSAGE Referenced part does not exist yet: org.eclipse.ui.views.TaskList.
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-01 15:58:58.403
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-01 15:58:58.855
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-01 15:58:58.910
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-01 15:58:58.948
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-01 15:59:00.126
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-01 15:59:00.482
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-01 15:59:03.640
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-01 15:59:04.213
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-01 15:59:07.675
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-01 15:59:07.687
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-01 15:59:07.701
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-01 15:59:07.712
+!MESSAGE Failed to find device info
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-12-01 15:59:07.943
+!MESSAGE Indexed 'main.h' (0 sources, 0 headers) in 0 sec: 0 declarations; 0 references; 0 unresolved inclusions; 0 syntax errors; 0 unresolved names (0 %)
+
+!ENTRY org.eclipse.cdt.ui 4 4 2022-12-02 15:23:13.269
+!MESSAGE Error
+!STACK 1
+C Model Exception: Core Exception [code 77] < is an invalid character in resource name 'syscqlls<c'.
+	at org.eclipse.cdt.internal.core.model.BatchOperation.executeOperation(BatchOperation.java:47)
+	at org.eclipse.cdt.internal.core.model.CModelOperation.execute(CModelOperation.java:341)
+	at org.eclipse.cdt.internal.core.model.CModelOperation.run(CModelOperation.java:607)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2240)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2267)
+	at org.eclipse.cdt.core.model.CoreModel.run(CoreModel.java:1220)
+	at org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter.run(WorkbenchRunnableAdapter.java:87)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:119)
+Caused by: org.eclipse.core.internal.resources.ResourceException: < is an invalid character in resource name 'syscqlls<c'.
+	at org.eclipse.core.internal.resources.Resource.checkValidPath(Resource.java:441)
+	at org.eclipse.core.internal.resources.File.create(File.java:103)
+	at org.eclipse.core.internal.resources.File.create(File.java:181)
+	at org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator.createFile(NewSourceFileGenerator.java:162)
+	at org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator.createNewFile(NewSourceFileGenerator.java:150)
+	at org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator.createEmptyFile(NewSourceFileGenerator.java:121)
+	at org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator.createSourceFile(NewSourceFileGenerator.java:110)
+	at org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileCreationWizardPage.createFile(NewSourceFileCreationWizardPage.java:162)
+	at org.eclipse.cdt.internal.ui.wizards.filewizard.AbstractFileCreationWizard.finishPage(AbstractFileCreationWizard.java:42)
+	at org.eclipse.cdt.internal.ui.wizards.NewElementWizard$2.run(NewElementWizard.java:94)
+	at org.eclipse.cdt.internal.core.model.BatchOperation.executeOperation(BatchOperation.java:36)
+	... 7 more
+!SUBENTRY 1 org.eclipse.cdt.core 4 966 2022-12-02 15:23:13.270
+!MESSAGE < is an invalid character in resource name 'syscqlls<c'.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: < is an invalid character in resource name 'syscqlls<c'.
+	at org.eclipse.core.internal.resources.Resource.checkValidPath(Resource.java:441)
+	at org.eclipse.core.internal.resources.File.create(File.java:103)
+	at org.eclipse.core.internal.resources.File.create(File.java:181)
+	at org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator.createFile(NewSourceFileGenerator.java:162)
+	at org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator.createNewFile(NewSourceFileGenerator.java:150)
+	at org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator.createEmptyFile(NewSourceFileGenerator.java:121)
+	at org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileGenerator.createSourceFile(NewSourceFileGenerator.java:110)
+	at org.eclipse.cdt.internal.ui.wizards.filewizard.NewSourceFileCreationWizardPage.createFile(NewSourceFileCreationWizardPage.java:162)
+	at org.eclipse.cdt.internal.ui.wizards.filewizard.AbstractFileCreationWizard.finishPage(AbstractFileCreationWizard.java:42)
+	at org.eclipse.cdt.internal.ui.wizards.NewElementWizard$2.run(NewElementWizard.java:94)
+	at org.eclipse.cdt.internal.core.model.BatchOperation.executeOperation(BatchOperation.java:36)
+	at org.eclipse.cdt.internal.core.model.CModelOperation.execute(CModelOperation.java:341)
+	at org.eclipse.cdt.internal.core.model.CModelOperation.run(CModelOperation.java:607)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2240)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2267)
+	at org.eclipse.cdt.core.model.CoreModel.run(CoreModel.java:1220)
+	at org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter.run(WorkbenchRunnableAdapter.java:87)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:119)
+!SUBENTRY 2 org.eclipse.core.resources 4 77 2022-12-02 15:23:13.270
+!MESSAGE < is an invalid character in resource name 'syscqlls<c'.
+
+!ENTRY com.atollic.truestudio.debug 4 0 2022-12-02 15:25:22.135
+!MESSAGE Error - No active DSF-Session. tmpSessionId = 30 (contextManager row 121)
+
+!ENTRY com.atollic.truestudio.debug 4 0 2022-12-02 15:25:22.186
+!MESSAGE Existing sessions are:
+
+!ENTRY com.atollic.truestudio.debug 4 0 2022-12-02 15:25:22.304
+!MESSAGE Error - No active DSF-Session. tmpSessionId = 30 (contextManager row 121)
+
+!ENTRY com.atollic.truestudio.debug 4 0 2022-12-02 15:25:22.340
+!MESSAGE Existing sessions are:
+
+!ENTRY org.eclipse.cdt.dsf 4 10005 2022-12-05 15:18:48.157
+!MESSAGE Request for monitor: 'RequestMonitor (org.eclipse.cdt.dsf.mi.service.MIRunControl$9@1b9e466): Status ERROR: org.eclipse.cdt.dsf.gdb code=10004 Interrupt failed. null' resulted in an error.
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10004 2022-12-05 15:18:48.157
+!MESSAGE Interrupt failed.
+
+!ENTRY org.eclipse.cdt.dsf 4 10004 2022-12-05 15:18:48.223
+!MESSAGE Invalid breakpoint parameter(s)
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10004 2022-12-05 15:18:48.223
+!MESSAGE Invalid breakpoint parameter(s)
+
+!ENTRY TrueSTUDIO 4 0 2022-12-05 15:20:08.804
+!MESSAGE ST-LINK GDB server failed to start (exit code = 1)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 5012 2022-12-05 15:20:09.004
+!MESSAGE Error in initializing ST-Link device.
+Reason: (1) Failed to connect to device. Please check power and cabling to target.
+
+!ENTRY org.eclipse.cdt.dsf 4 10005 2022-12-05 15:46:45.677
+!MESSAGE Request for monitor: 'RequestMonitor (org.eclipse.cdt.dsf.concurrent.RequestMonitor@3ea812): Status ERROR: org.eclipse.cdt.dsf.gdb code=10001 Given context: (gdb[43].proc[42000].threadGroup[i1],gdb[43].proc[42000].OSthread[1]).thread[1], is already running. null' resulted in an error.
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10001 2022-12-05 15:46:45.677
+!MESSAGE Given context: (gdb[43].proc[42000].threadGroup[i1],gdb[43].proc[42000].OSthread[1]).thread[1], is already running.
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-12-06 11:11:20.462
+!MESSAGE Indexed 'application' (111 sources, 336 headers) in 44,2 sec: 48 903 declarations; 214 826 references; 0 unresolved inclusions; 153 syntax errors; 81 unresolved names (0,031 %)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-12-06 11:22:17.044
+!MESSAGE Indexed 'application' (111 sources, 336 headers) in 37,6 sec: 48 903 declarations; 214 826 references; 0 unresolved inclusions; 153 syntax errors; 81 unresolved names (0,031 %)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-12-06 11:23:35.884
+!MESSAGE Indexed 'application' (111 sources, 336 headers) in 36,2 sec: 48 903 declarations; 214 826 references; 0 unresolved inclusions; 153 syntax errors; 81 unresolved names (0,031 %)
+
+!ENTRY com.atollic.hardwaredebug.launch 2 0 2022-12-06 12:00:43.293
+!MESSAGE Won't launch debug session since we failed to locate the binary.
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-12-06 12:02:54.054
+!MESSAGE Indexed 'application' (111 sources, 336 headers) in 28,9 sec: 48 903 declarations; 214 826 references; 0 unresolved inclusions; 153 syntax errors; 81 unresolved names (0,031 %)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 104 2022-12-06 12:09:49.148
+!MESSAGE Program file does not exist
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 104 2022-12-06 12:09:49.148
+!MESSAGE 
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 104 2022-12-06 12:09:52.682
+!MESSAGE Program file does not exist
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 104 2022-12-06 12:09:52.682
+!MESSAGE 
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 104 2022-12-06 13:37:38.269
+!MESSAGE Program file does not exist
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 104 2022-12-06 13:37:38.269
+!MESSAGE 
+
+!ENTRY TrueSTUDIO 4 0 2022-12-06 13:39:36.037
+!MESSAGE ST-LINK GDB server failed to start (exit code = 1)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 5012 2022-12-06 13:39:36.165
+!MESSAGE Error in initializing ST-Link device.
+Reason: (1) Failed to connect to device. Please check power and cabling to target.
+
+!ENTRY TrueSTUDIO 4 0 2022-12-06 13:39:53.302
+!MESSAGE ST-LINK GDB server failed to start (exit code = 1)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 5012 2022-12-06 13:39:53.437
+!MESSAGE Error in initializing ST-Link device.
+Reason: (1) Failed to connect to device. Please check power and cabling to target.
+
+!ENTRY TrueSTUDIO 4 0 2022-12-06 13:40:35.140
+!MESSAGE ST-LINK GDB server failed to start (exit code = 1)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 5012 2022-12-06 13:40:35.233
+!MESSAGE Error in initializing ST-Link device.
+Reason: (1) Failed to connect to device. Please check power and cabling to target.
+
+!ENTRY TrueSTUDIO 4 0 2022-12-06 13:50:55.228
+!MESSAGE ST-LINK GDB server failed to start (exit code = 1)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 5012 2022-12-06 13:50:55.343
+!MESSAGE Error in initializing ST-Link device.
+Reason: (1) Failed to connect to device. Please check power and cabling to target.
+
+!ENTRY TrueSTUDIO 4 0 2022-12-06 13:55:04.381
+!MESSAGE ST-LINK GDB server failed to start (exit code = 1)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 5012 2022-12-06 13:55:04.496
+!MESSAGE Error in initializing ST-Link device.
+Reason: (1) Failed to connect to device. Please check power and cabling to target.
+
+!ENTRY TrueSTUDIO 4 0 2022-12-06 13:56:57.693
+!MESSAGE ST-LINK GDB server failed to start (exit code = 1)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 5012 2022-12-06 13:56:57.822
+!MESSAGE Error in initializing ST-Link device.
+Reason: (1) Failed to connect to device. Please check power and cabling to target.
+
+!ENTRY TrueSTUDIO 4 0 2022-12-06 13:58:03.442
+!MESSAGE ST-LINK GDB server failed to start (exit code = 1)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 5012 2022-12-06 13:58:11.346
+!MESSAGE Error in initializing ST-Link device.
+Reason: (1) Failed to connect to device. Please check power and cabling to target.
+
+!ENTRY TrueSTUDIO 4 0 2022-12-06 13:58:48.594
+!MESSAGE ST-LINK GDB server failed to start (exit code = 1)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 5012 2022-12-06 13:58:54.118
+!MESSAGE Error in initializing ST-Link device.
+Reason: (1) Failed to connect to device. Please check power and cabling to target.
+
+!ENTRY TrueSTUDIO 4 0 2022-12-06 13:59:49.358
+!MESSAGE ST-LINK GDB server failed to start (exit code = 1)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 5012 2022-12-06 13:59:49.472
+!MESSAGE Error in initializing ST-Link device.
+Reason: (1) Failed to connect to device. Please check power and cabling to target.
+
+!ENTRY TrueSTUDIO 4 0 2022-12-06 14:01:24.648
+!MESSAGE ST-LINK GDB server failed to start (exit code = 1)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 5012 2022-12-06 14:01:26.343
+!MESSAGE Error in initializing ST-Link device.
+Reason: (1) Failed to connect to device. Please check power and cabling to target.
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 5012 2022-12-06 14:02:08.551
+!MESSAGE Failed to execute MI command:
+target extended-remote localhost:2331
+
+Error message from debugger back end:
+localhost:2331: Le système a tenté de joindre un lecteur à un répertoire stocké sur un lecteur joint.
+
+!ENTRY com.atollic.truestudio.productmanager 1 0 2022-12-06 14:02:37.759
+!MESSAGE Unloading product manager
+
+!ENTRY org.eclipse.cdt.dsf 4 10005 2022-12-06 14:02:38.503
+!MESSAGE Request for monitor: 'RequestMonitor (org.eclipse.cdt.dsf.concurrent.RequestMonitor@188a487): Status ERROR: org.eclipse.cdt.dsf.gdb code=10001 Connection is shut down null' resulted in an error.
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10001 2022-12-06 14:02:38.503
+!MESSAGE Connection is shut down
+
+!ENTRY org.eclipse.cdt.dsf 4 10005 2022-12-06 14:02:41.274
+!MESSAGE Request for monitor: 'RequestMonitor (org.eclipse.cdt.dsf.mi.service.MIRunControl$9@d31af): Status ERROR: org.eclipse.cdt.dsf.gdb code=10001 Context cannot be suspended. null' resulted in an error.
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 10001 2022-12-06 14:02:41.274
+!MESSAGE Context cannot be suspended.
+
+!ENTRY org.eclipse.core.resources 2 10035 2022-12-06 14:02:51.636
+!MESSAGE The workspace will exit with unsaved changes in this session.
+
+!ENTRY org.eclipse.core.jobs 2 2 2022-12-06 14:02:52.823
+!MESSAGE Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: org.eclipse.core.internal.resources.refresh.win32.Win32Monitor
+
+!ENTRY org.eclipse.core.jobs 2 2 2022-12-06 14:02:53.042
+!MESSAGE Job found still running after platform shutdown.  Jobs should be canceled by the plugin that scheduled them during shutdown: org.eclipse.debug.core.DebugPlugin$EventDispatchJob
+!SESSION 2022-12-06 14:18:27.357 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.8.0_181
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=fr_FR
+Command-line arguments:  -os win32 -ws win32 -arch x86
+
+!ENTRY com.atollic.truestudio.productmanager 1 0 2022-12-06 14:18:37.990
+!MESSAGE Loading product manager
+
+!ENTRY com.atollic.truestudio.productmanager 1 0 2022-12-06 14:18:37.997
+!MESSAGE OS info: Windows 10, 10.0, x86
+
+!ENTRY org.eclipse.core.resources 2 10035 2022-12-06 14:18:38.181
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY TrueSTUDIO 1 0 2022-12-06 14:18:38.726
+!MESSAGE Target: STM32, Version: 9.3.0, Build date: 20190212-0734, Installation dir: /C:/Program Files (x86)/Atollic/TrueSTUDIO for STM32 9.3.0/ide/
+
+!ENTRY TrueSTUDIO 1 0 2022-12-06 14:18:38.752
+!MESSAGE Workspace: F:\PROJECTS\stm32_iot\github\Stm32xIOT\stm32_programs\embedded\STM32L476RG\software\bootloader
+
+!ENTRY org.eclipse.jface 2 0 2022-12-06 14:18:39.519
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2022-12-06 14:18:39.519
+!MESSAGE A conflict occurred for ALT+CTRL+T:
+Binding(ALT+CTRL+T,
+	ParameterizedCommand(Command(org.eclipse.team.svn.ui.command.EditPropertiesCommand,Show Properties,
+		,
+		Category(org.eclipse.team.svn.ui.command.category,SVN,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@126893f,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+Binding(ALT+CTRL+T,
+	ParameterizedCommand(Command(org.eclipse.tm.terminal.connector.local.command.launch,Open Local Terminal on Selection,
+		,
+		Category(org.eclipse.tm.terminal.view.ui.commands.category,Terminal Commands,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@1e45b6c,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+
+!ENTRY com.atollic.truestudio.integration.processorexpert 0 0 2022-12-06 14:18:42.249
+!MESSAGE Atollic TrueSTUDIO Processor Expert integration is up.
+
+!ENTRY edu.hawaii.ics.csdl.jupiter 1 0 2022-12-06 14:18:42.281
+!MESSAGE Code Review is up.
+
+!ENTRY org.eclipse.egit.ui 2 0 2022-12-06 14:18:42.447
+!MESSAGE Warning: The environment variable HOME is not set. The following directory will be used to store the Git
+user global configuration and to define the default location to store repositories: 'C:\Users\Administrateur'. If this is
+not correct please set the HOME environment variable and restart Eclipse. Otherwise Git for Windows and
+EGit might behave differently since they see different configuration options.
+This warning can be switched off on the Team > Git > Confirmations and Warnings preference page.
+
+!ENTRY org.eclipse.core.net 1 0 2022-12-06 14:18:42.458
+!MESSAGE System property http.proxyHost is set to 172.16.0.254 but should not be set.
+
+!ENTRY org.eclipse.core.net 1 0 2022-12-06 14:18:42.470
+!MESSAGE System property http.proxyPort is set to 8080 but should not be set.
+
+!ENTRY org.eclipse.core.net 1 0 2022-12-06 14:18:42.489
+!MESSAGE System property http.proxyHost is set to 172.16.0.254 but should not be set.
+
+!ENTRY org.eclipse.core.net 1 0 2022-12-06 14:18:42.505
+!MESSAGE System property http.proxyPort is set to 8080 but should not be set.
+
+!ENTRY com.atollic.hardwaredebug.launch 2 0 2022-12-08 11:53:02.096
+!MESSAGE Won't launch debug session since we failed to locate the binary.
+
+!ENTRY com.atollic.truestudio.common.wizards 4 0 2022-12-08 12:34:59.497
+!MESSAGE Failed to find the correct FPU ABI, falling back to Soft. Value: 
+
+!ENTRY com.atollic.truestudio.common.wizards 4 0 2022-12-08 12:35:03.370
+!MESSAGE Failed to find the correct FPU ABI, falling back to Soft. Value: 
+
+!ENTRY com.atollic.truestudio.common.wizards 4 0 2022-12-08 12:35:14.819
+!MESSAGE Failed to find the correct FPU ABI, falling back to Soft. Value: 
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-08 12:35:33.256
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-08 12:35:33.289
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-08 12:35:33.302
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-08 12:35:33.310
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-12-08 12:35:33.834
+!MESSAGE Application needs property 'com.atollic.truestudio.general.runtimelib.1381703384' fixed. Fixing to 'com.atollic.truestudio.ld.general.cclib.CCSmallCSmall'.
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-12-08 12:35:33.843
+!MESSAGE Failed to get device info (Debug) for project Application
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-12-08 12:35:33.851
+!MESSAGE Failed to get device info (Debug) for project Application
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-12-08 12:35:33.859
+!MESSAGE Failed to get device info (Debug) for project Application
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-12-08 12:35:33.867
+!MESSAGE Failed to get device info (Debug) for project Application
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-12-08 12:35:33.878
+!MESSAGE Application needs property 'com.atollic.truestudio.general.runtimelib.409924714' fixed. Fixing to 'com.atollic.truestudio.ld.general.cclib.CCSmallCSmall'.
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-12-08 12:35:33.882
+!MESSAGE Failed to get device info (Release) for project Application
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-12-08 12:35:33.885
+!MESSAGE Failed to get device info (Release) for project Application
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-12-08 12:35:33.890
+!MESSAGE Failed to get device info (Release) for project Application
+
+!ENTRY com.atollic.truestudio.mbs 2 0 2022-12-08 12:35:33.893
+!MESSAGE Failed to get device info (Release) for project Application
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-08 12:35:34.111
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-08 12:35:34.128
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-08 12:35:34.146
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-08 12:35:34.162
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-08 12:35:34.497
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-08 12:35:34.508
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-08 12:35:52.105
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-08 12:35:52.338
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-08 12:35:53.603
+!MESSAGE Failed to find device info
+
+!ENTRY com.atollic.truestudio.mbs 4 0 2022-12-08 12:35:53.852
+!MESSAGE Failed to find device info
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-12-08 12:36:38.685
+!MESSAGE Indexed 'Application' (3 sources, 121 headers) in 9,15 sec: 23 998 declarations; 35 903 references; 0 unresolved inclusions; 153 syntax errors; 77 unresolved names (0,13 %)
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-12-08 12:43:59.857
+!MESSAGE Indexed 'Application' (109 sources, 317 headers) in 15,5 sec: 47 846 declarations; 212 684 references; 0 unresolved inclusions; 153 syntax errors; 147 unresolved names (0,056 %)
+
+!ENTRY com.atollic.hardwaredebug.launch 2 0 2022-12-08 13:19:20.778
+!MESSAGE Won't launch debug session since we failed to locate the binary.
+
+!ENTRY com.atollic.hardwaredebug.launch 2 0 2022-12-08 13:37:31.037
+!MESSAGE Won't launch debug session since we failed to locate the binary.
+
+!ENTRY com.atollic.truestudio.productmanager 1 0 2022-12-08 13:50:41.235
+!MESSAGE Unloading product manager

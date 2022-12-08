@@ -1,0 +1,20 @@
+15:22:26 **** Incremental Build of configuration Debug for project application ****
+make -j8 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L073xx -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "application.elf" @"objects.list"   -mcpu=cortex-m0plus -T"F:\PROJECTS\stm32_iot\github\Stm32xIOT\stm32_programs\embedded_cube\STM32L073RZ\application\STM32L073RZTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="application.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: application.elf
+ 
+arm-none-eabi-size   application.elf 
+arm-none-eabi-objdump -h -S  application.elf  > "application.list"
+arm-none-eabi-objcopy  -O binary  application.elf  "application.bin"
+   text	   data	    bss	    dec	    hex	filename
+  15316	    120	   1992	  17428	   4414	application.elf
+Finished building: default.size.stdout
+ 
+Finished building: application.bin
+ 
+Finished building: application.list
+ 
+
+15:22:35 Build Finished. 0 errors, 0 warnings. (took 8s.952ms)
+
